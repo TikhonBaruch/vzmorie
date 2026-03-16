@@ -28,7 +28,7 @@ function Tile({
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" }as const }
       className={[
         "group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70",
         "shadow-tactical shadow-black/25 ring-1 ring-transparent",

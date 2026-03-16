@@ -7,7 +7,7 @@ const fadeIn = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.5, ease: "easeOut" }
+  transition: { duration: 0.5, ease: "easeOut" } as const
 };
 
 const features = [
@@ -34,7 +34,7 @@ export function TariffsBento() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 }}
+        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
         className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
       >
         <div className="flex flex-col justify-between rounded-2xl border border-terracotta-500/60 bg-slate-950/70 p-6 shadow-[0_0_40px_rgba(234,88,12,0.25)] ring-1 ring-terracotta-600/40">

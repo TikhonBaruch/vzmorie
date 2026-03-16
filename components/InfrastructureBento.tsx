@@ -7,7 +7,7 @@ const fadeIn = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.5, ease: "easeOut" }
+  transition: { duration: 0.5, ease: "easeOut" }as const
 };
 
 const cards = [
@@ -54,7 +54,7 @@ export function InfrastructureBento() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 }}
+        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
         className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2"
       >
         {cards.map((card) => (

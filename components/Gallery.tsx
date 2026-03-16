@@ -6,7 +6,7 @@ const fadeIn = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.5, ease: "easeOut" }
+  transition: { duration: 0.5, ease: "easeOut" } as const
 };
 
 const filters = [
@@ -40,7 +40,7 @@ export function Gallery() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 }}
+        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
         className="mt-8 flex flex-wrap justify-center gap-2"
       >
         {filters.map((filter) => {
@@ -64,7 +64,7 @@ export function Gallery() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.1 }}
+        transition={{ ...fadeIn.transition, delay: 0.1 } as const}
         className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4"
       >
         {items.map((item) => (

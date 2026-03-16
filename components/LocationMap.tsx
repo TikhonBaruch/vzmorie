@@ -7,7 +7,7 @@ const fadeIn = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.5, ease: "easeOut" }
+  transition: { duration: 0.5, ease: "easeOut" } as const
 };
 
 const rings = [
@@ -48,7 +48,7 @@ export function LocationMap() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 }}
+        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
         className="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/90 shadow-tactical shadow-black/40"
       >
         <div className="relative aspect-video w-full min-h-[320px] sm:min-h-[420px]">

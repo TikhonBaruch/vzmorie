@@ -24,7 +24,7 @@ export function FeaturesSplit() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 }}
+        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
         className="mt-10 grid gap-6 md:grid-cols-2"
       >
         <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-tactical shadow-black/30">

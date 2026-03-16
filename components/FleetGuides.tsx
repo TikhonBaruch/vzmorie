@@ -7,7 +7,7 @@ const fadeIn = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.5, ease: "easeOut" }
+  transition: { duration: 0.5, ease: "easeOut" } as const
 };
 
 export function FleetGuides() {
@@ -27,7 +27,7 @@ export function FleetGuides() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 }}
+        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
         className="mt-10 flex flex-col gap-6 md:flex-row"
       >
         <div className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-tactical shadow-black/30 transition-colors hover:border-slate-700">
