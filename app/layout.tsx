@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,9 +11,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru">
       <body>
-        <div className="min-h-dvh bg-tactical-radial">
-          <div className="min-h-dvh">{children}</div>
-        </div>
+        <Providers>
+          <div className="min-h-dvh bg-tactical-radial">
+            <div className="min-h-dvh">{children}</div>
+          </div>
+        </Providers>
       </body>
     </html>
   );
