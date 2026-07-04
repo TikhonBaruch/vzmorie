@@ -163,6 +163,26 @@ enum PostStatus {
   ARCHIVED
 }
 
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  price       Float
+  oldPrice    Float?
+  category    String
+  image       String?
+  inStock     Boolean  @default(true)
+  featured    Boolean  @default(false)
+  sort        Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([featured])
+  @@map("products")
+}
+
 enum MediaType {
   IMAGE
   VIDEO
