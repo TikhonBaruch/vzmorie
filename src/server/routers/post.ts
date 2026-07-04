@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, adminProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 import { PostType, PostStatus } from "@prisma/client";
 
 export const postRouter = router({
@@ -72,7 +73,7 @@ export const postRouter = router({
       });
 
       if (!post) {
-        throw new Error("Post not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
       }
 
       return post;

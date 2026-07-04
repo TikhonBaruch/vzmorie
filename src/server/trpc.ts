@@ -48,10 +48,12 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
-
 export const adminProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  if ((ctx.session.user as any).role !== "ADMIN") {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
   }
   return next({
     ctx: {

@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const category = searchParams.get("category");
   const search = searchParams.get("search");
 
-  const where: any = {};
+  const where: Record<string, any> = {};
   if (category && category !== "all") where.category = category;
   if (search) {
     where.OR = [
@@ -24,35 +24,39 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { name, description, price, oldPrice, category, image, inStock, featured, sort } = body;
+  try {
+    const body = await req.json();
+    const { name, description, price, oldPrice, category, image, inStock, featured, sort } = body;
 
-  if (!name || !price || !category) {
-    return NextResponse.json({ error: "Name, price, category required" }, { status: 400 });
+    if (!name || !price || !category) {
+      return NextResponse.json({ error: "Name, price, category required" }, { status: 400 });
+    }
+
+    const slug = name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9а-яё-]/gi, "")
+      .slice(0, 100);
+
+    const slugUnique = `${slug}-${Date.now()}`;
+
+    const product = await prisma.product.create({
+      data: {
+        name,
+        slug: slugUnique,
+        description,
+        price: parseFloat(price),
+        oldPrice: oldPrice ? parseFloat(oldPrice) : null,
+        category,
+        image,
+        inStock: inStock !== false,
+        featured: featured === true,
+        sort: sort ? parseInt(sort) || 0 : 0,
+      },
+    });
+
+    return NextResponse.json(product, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
-
-  const slug = name
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9а-яё-]/gi, "")
-    .slice(0, 100);
-
-  const slugUnique = `${slug}-${Date.now()}`;
-
-  const product = await prisma.product.create({
-    data: {
-      name,
-      slug: slugUnique,
-      description,
-      price: parseFloat(price),
-      oldPrice: oldPrice ? parseFloat(oldPrice) : null,
-      category,
-      image,
-      inStock: inStock !== false,
-      featured: featured === true,
-      sort: sort ? parseInt(sort) : 0,
-    },
-  });
-
-  return NextResponse.json(product, { status: 201 });
 }

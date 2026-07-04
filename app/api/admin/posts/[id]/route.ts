@@ -30,53 +30,61 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const body = await req.json();
-  const { title, content, excerpt, status, type, tags, coverImage, location, fishType, weight } = body;
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { title, content, excerpt, status, type, tags, coverImage, location, fishType, weight } = body;
 
-  const data: any = {};
-  if (title !== undefined) data.title = title;
-  if (content !== undefined) data.content = content;
-  if (excerpt !== undefined) data.excerpt = excerpt;
-  if (status !== undefined) data.status = status;
-  if (type !== undefined) data.type = type;
-  if (coverImage !== undefined) data.coverImage = coverImage;
-  if (location !== undefined) data.location = location;
-  if (fishType !== undefined) data.fishType = fishType;
-  if (weight !== undefined) data.weight = weight ? parseFloat(weight) : null;
-  if (status === "PUBLISHED") data.publishedAt = new Date();
+    const data: Record<string, any> = {};
+    if (title !== undefined) data.title = title;
+    if (content !== undefined) data.content = content;
+    if (excerpt !== undefined) data.excerpt = excerpt;
+    if (status !== undefined) data.status = status;
+    if (type !== undefined) data.type = type;
+    if (coverImage !== undefined) data.coverImage = coverImage;
+    if (location !== undefined) data.location = location;
+    if (fishType !== undefined) data.fishType = fishType;
+    if (weight !== undefined) data.weight = weight ? parseFloat(weight) : null;
+    if (status === "PUBLISHED") data.publishedAt = new Date();
 
-  if (tags !== undefined) {
-    const tagRecords = await Promise.all(
-      tags.map(async (tagName: string) => {
-        const tagSlug = tagName
-          .toLowerCase()
-          .replace(/\s+/g, "-")
-          .replace(/[^a-z0-9а-яё-]/gi, "");
-        return prisma.tag.upsert({
-          where: { slug: tagSlug },
-          create: { name: tagName, slug: tagSlug },
-          update: {},
-        });
-      })
-    );
-    data.tags = { set: tagRecords.map((t) => ({ id: t.id })) };
+    if (tags !== undefined) {
+      const tagRecords = await Promise.all(
+        tags.map(async (tagName: string) => {
+          const tagSlug = tagName
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^a-z0-9а-яё-]/gi, "");
+          return prisma.tag.upsert({
+            where: { slug: tagSlug },
+            create: { name: tagName, slug: tagSlug },
+            update: {},
+          });
+        })
+      );
+      data.tags = { set: tagRecords.map((t) => ({ id: t.id })) };
+    }
+
+    const post = await prisma.post.update({
+      where: { id },
+      data,
+      include: { tags: true },
+    });
+
+    return NextResponse.json(post);
+  } catch (error) {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
-
-  const post = await prisma.post.update({
-    where: { id },
-    data,
-    include: { tags: true },
-  });
-
-  return NextResponse.json(post);
 }
 
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  await prisma.post.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  try {
+    const { id } = await params;
+    await prisma.post.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
 }

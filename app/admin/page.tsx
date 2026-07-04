@@ -31,14 +31,19 @@ interface PendingPost {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [pending, setPending] = useState<PendingPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/stats")
-      .then((r) => r.json())
-      .then(setStats);
-    fetch("/api/admin/posts?status=PENDING")
-      .then((r) => r.json())
-      .then(setPending);
+    Promise.all([
+      fetch("/api/admin/stats").then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/admin/posts?status=PENDING").then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([statsData, pendingData]) => {
+        setStats(statsData);
+        setPending(pendingData || []);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const cards = [
@@ -51,24 +56,36 @@ export default function AdminDashboard() {
   ];
 
   const handleApprove = async (id: string) => {
-    await fetch(`/api/admin/posts/${id}`, {
+    const res = await fetch(`/api/admin/posts/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "PUBLISHED" }),
     });
-    setPending((p) => p.filter((post) => post.id !== id));
-    setStats((s) => s ? { ...s, pendingPosts: s.pendingPosts - 1, publishedPosts: s.publishedPosts + 1 } : s);
+    if (res.ok) {
+      setPending((p) => p.filter((post) => post.id !== id));
+      setStats((s) => s ? { ...s, pendingPosts: s.pendingPosts - 1, publishedPosts: s.publishedPosts + 1 } : s);
+    }
   };
 
   const handleReject = async (id: string) => {
-    await fetch(`/api/admin/posts/${id}`, {
+    const res = await fetch(`/api/admin/posts/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "DRAFT" }),
     });
-    setPending((p) => p.filter((post) => post.id !== id));
-    setStats((s) => s ? { ...s, pendingPosts: s.pendingPosts - 1 } : s);
+    if (res.ok) {
+      setPending((p) => p.filter((post) => post.id !== id));
+      setStats((s) => s ? { ...s, pendingPosts: s.pendingPosts - 1 } : s);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-slate-400">Загрузка...</div>
+      </div>
+    );
+  }
 
   return (
     <div>

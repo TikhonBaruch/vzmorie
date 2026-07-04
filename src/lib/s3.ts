@@ -16,7 +16,6 @@ export async function uploadToS3({
   file,
   folder = "uploads",
 }: UploadOptions): Promise<UploadResult> {
-  // Get presigned URL from API
   const response = await fetch("/api/upload/presign", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,7 +28,6 @@ export async function uploadToS3({
 
   const { uploadUrl, key, publicUrl } = await response.json();
 
-  // Upload file to S3
   await fetch(uploadUrl, {
     method: "PUT",
     body: file,
@@ -42,14 +40,6 @@ export async function uploadToS3({
     url: publicUrl,
     key,
   };
-}
-
-export async function deleteFromS3(key: string): Promise<void> {
-  await fetch("/api/upload/delete", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ key }),
-  });
 }
 
 export function getFileExtension(filename: string): string {

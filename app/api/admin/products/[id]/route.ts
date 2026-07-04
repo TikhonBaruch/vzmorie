@@ -19,34 +19,42 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const body = await req.json();
-  const { name, description, price, oldPrice, category, image, inStock, featured, sort } = body;
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { name, description, price, oldPrice, category, image, inStock, featured, sort } = body;
 
-  const data: any = {};
-  if (name !== undefined) data.name = name;
-  if (description !== undefined) data.description = description;
-  if (price !== undefined) data.price = parseFloat(price);
-  if (oldPrice !== undefined) data.oldPrice = oldPrice ? parseFloat(oldPrice) : null;
-  if (category !== undefined) data.category = category;
-  if (image !== undefined) data.image = image;
-  if (inStock !== undefined) data.inStock = inStock;
-  if (featured !== undefined) data.featured = featured;
-  if (sort !== undefined) data.sort = parseInt(sort);
+    const data: Record<string, any> = {};
+    if (name !== undefined) data.name = name;
+    if (description !== undefined) data.description = description;
+    if (price !== undefined) data.price = parseFloat(price);
+    if (oldPrice !== undefined) data.oldPrice = oldPrice ? parseFloat(oldPrice) : null;
+    if (category !== undefined) data.category = category;
+    if (image !== undefined) data.image = image;
+    if (inStock !== undefined) data.inStock = inStock;
+    if (featured !== undefined) data.featured = featured;
+    if (sort !== undefined) data.sort = parseInt(sort) || 0;
 
-  const product = await prisma.product.update({
-    where: { id },
-    data,
-  });
+    const product = await prisma.product.update({
+      where: { id },
+      data,
+    });
 
-  return NextResponse.json(product);
+    return NextResponse.json(product);
+  } catch (error) {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
 }
 
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  await prisma.product.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  try {
+    const { id } = await params;
+    await prisma.product.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
 }

@@ -74,7 +74,7 @@ model Post {
   type        PostType   @default(CATCH)
   status      PostStatus @default(DRAFT)
   authorId    String
-  author      User       @relation(fields: [authorId], references: [id])
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   tags        Tag[]
   media       Media[]
   comments    Comment[]
@@ -119,11 +119,11 @@ model Comment {
   id        String  @id @default(cuid())
   content   String  @db.Text
   authorId  String
-  author    User    @relation(fields: [authorId], references: [id])
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   postId    String
   post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
   parentId  String?
-  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
   replies   Comment[] @relation("CommentReplies")
   createdAt DateTime @default(now())
 
