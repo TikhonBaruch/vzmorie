@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const post = await prisma.post.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       author: { select: { id: true, name: true } },
       tags: true,
@@ -26,9 +27,10 @@ export async function GET(
 }
 
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const body = await req.json();
   const { title, content, excerpt, status, type, tags, coverImage, location, fishType, weight } = body;
 
@@ -62,7 +64,7 @@ export async function PUT(
   }
 
   const post = await prisma.post.update({
-    where: { id: params.id },
+    where: { id },
     data,
     include: { tags: true },
   });
@@ -71,9 +73,10 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  await prisma.post.delete({ where: { id: params.id } });
+  const { id } = await params;
+  await prisma.post.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
