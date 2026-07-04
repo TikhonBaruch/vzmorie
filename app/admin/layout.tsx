@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Users, Mail, Settings } from "lucide-react";
+import { LayoutDashboard, FileText } from "lucide-react";
 
 const sidebar = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard },
   { label: "Публикации", href: "/admin/posts", icon: FileText },
-  { label: "Пользователи", href: "/admin/users", icon: Users },
-  { label: "Рассылки", href: "/admin/subscribers", icon: Mail },
-  { label: "Настройки", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminLayout({
