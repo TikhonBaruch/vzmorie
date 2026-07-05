@@ -59,7 +59,7 @@ interface SiteImage {
   alt: string | null;
 }
 
-const DEFAULT_HERO = "https://picsum.photos/1400/900?blur=1";
+const DEFAULT_HERO = "https://picsum.photos/1400/900";
 
 export function HeroBento() {
   const [latest, setLatest] = useState<LatestPost | null>(null);
@@ -94,15 +94,15 @@ export function HeroBento() {
       <div className="flex flex-col gap-4 md:grid md:grid-cols-4 md:grid-rows-2">
         <Tile className="md:col-span-2 md:row-span-2" accent="terracotta">
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.35),rgba(2,6,23,0.85))]" />
             <Image
               src={heroUrl}
               alt="Кулагинский банк Каспийского моря"
               fill
               priority
-              className="object-cover opacity-40"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, 60vw"
             />
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.4),rgba(2,6,23,0.9))]" />
           </div>
 
           <div className="flex h-full flex-col justify-end p-6 sm:p-8">
