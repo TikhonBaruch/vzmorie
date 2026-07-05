@@ -1,5 +1,6 @@
 import { Header } from "../components/Header";
 import { HeroBento } from "../components/HeroBento";
+import { ConditionsBlock } from "../components/ConditionsBlock";
 import { FeaturesSplit } from "../components/FeaturesSplit";
 import { TariffsBento } from "../components/TariffsBento";
 import { InfrastructureBento } from "../components/InfrastructureBento";
@@ -14,6 +15,7 @@ export default function Page() {
       <Header />
       <main className="container-tactical pb-16 pt-24 sm:pt-28">
         <HeroBento />
+        <ConditionsBlock />
         <FeaturesSplit />
         <TariffsBento />
         <InfrastructureBento />
@@ -25,4 +27,3 @@ export default function Page() {
     </div>
   );
 }
-

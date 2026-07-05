@@ -122,6 +122,21 @@ export async function notifyModeration(post: {
   });
 }
 
+export async function sendMorningTemplate(chatId: string | number) {
+  const text = `📋 <b>Утренняя сводка</b>
+
+Отправь сводку в формате:
+
+<b>Погода:</b> солнечно, +18°C, ветер 3 м/с
+<b>Что клюёт:</b> жерех на воблер, окунь на блесну
+<b>Уровень воды:</b> стабильный / падает / поднимается
+<b>Чистота воды:</b> видимость 2-3 м / мутная
+
+Или просто отправь фото с описанием улова — это будет пост типа "Трофей".`;
+
+  return sendTelegramMessage({ chatId, text });
+}
+
 export async function setWebhook() {
   const response = await fetch(`${TELEGRAM_API}/setWebhook`, {
     method: "POST",
