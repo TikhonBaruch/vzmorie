@@ -43,6 +43,10 @@ export function LocationMap() {
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-base">
           Локация решает. База стоит на русле, а не в тупиковом ерике.
+          90 км от Астрахани, трансфер через п. Кировский, далее лодкой.
+        </p>
+        <p className="mt-2 text-xs text-slate-500">
+          Координаты: 45.758469, 48.136073
         </p>
       </motion.div>
 

@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -9,20 +11,42 @@ const fadeIn = {
   transition: { duration: 0.5, ease: "easeOut" } as const
 };
 
-const filters = [
-  "Все",
-  "Спиннинг/Джиг",
-  "Подводная охота",
-  "Отдых/Баня"
-] as const;
+interface Post {
+  id: string;
+  title: string;
+  coverImage: string | null;
+  type: string;
+  fishType: string | null;
+  weight: number | null;
+  location: string | null;
+  publishedAt: string | null;
+}
 
-const items = Array.from({ length: 8 }).map((_, idx) => ({
-  id: idx,
-  label: "Октябрь. Сом 24 кг. Егерь: Михалыч"
-}));
+const TYPE_LABELS: Record<string, string> = {
+  CATCH: "Улов",
+  WEATHER: "Погода",
+  WATER_LEVEL: "Уровень воды",
+  EVENT: "Мероприятие",
+  PROMO: "Акция",
+  NEWS: "Новость",
+};
+
+const filters = ["Все", "CATCH", "NEWS", "EVENT"] as const;
 
 export function Gallery() {
-  const active = "Все";
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [active, setActive] = useState<string>("Все");
+
+  useEffect(() => {
+    fetch("/api/admin/posts?status=PUBLISHED")
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setPosts)
+      .catch(() => {});
+  }, []);
+
+  const filtered = active === "Все"
+    ? posts
+    : posts.filter((p) => p.type === active);
 
   return (
     <section className="py-20">
@@ -48,6 +72,7 @@ export function Gallery() {
           return (
             <button
               key={filter}
+              onClick={() => setActive(filter)}
               type="button"
               className={[
                 "rounded-full px-4 py-1.5 text-xs font-medium transition-colors",
@@ -56,7 +81,7 @@ export function Gallery() {
                   : "bg-slate-800 text-slate-200 hover:bg-slate-700"
               ].join(" ")}
             >
-              {filter}
+              {filter === "Все" ? "Все" : TYPE_LABELS[filter] || filter}
             </button>
           );
         })}
@@ -67,21 +92,50 @@ export function Gallery() {
         transition={{ ...fadeIn.transition, delay: 0.1 } as const}
         className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4"
       >
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="group relative aspect-square overflow-hidden rounded-xl bg-slate-800"
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.7),transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),transparent_60%)] opacity-60" />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/40 to-slate-900/80" />
-
-            <div className="absolute inset-0 flex items-center justify-center bg-black/0 px-3 text-center text-xs font-medium text-slate-100 opacity-0 backdrop-blur-sm transition group-hover:bg-black/70 group-hover:opacity-100">
-              <span>{item.label}</span>
-            </div>
+        {filtered.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-slate-500">
+            Пока нет публикаций. Загрузите фото через Telegram-бота!
           </div>
-        ))}
+        ) : (
+          filtered.map((post) => (
+            <div
+              key={post.id}
+              className="group relative aspect-square overflow-hidden rounded-xl bg-slate-800"
+            >
+              {post.coverImage ? (
+                <Image
+                  src={post.coverImage}
+                  alt={post.title}
+                  fill
+                  className="object-cover transition group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900" />
+              )}
+
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 transition group-hover:opacity-100">
+                <div className="text-xs font-medium text-slate-100">
+                  {post.title}
+                </div>
+                {post.fishType && (
+                  <div className="mt-1 text-xs text-slate-300">
+                    {post.fishType}{post.weight ? ` — ${post.weight} кг` : ""}
+                  </div>
+                )}
+              </div>
+
+              <div className="absolute left-2 top-2">
+                <span className="inline-block rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-slate-200 backdrop-blur-sm">
+                  {TYPE_LABELS[post.type] || post.type}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </motion.div>
     </section>
   );
 }
-

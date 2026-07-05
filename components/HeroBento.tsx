@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { ArrowRight, Fish, Radar, Shield, Target, Waves } from "lucide-react";
 
 function Tile({
@@ -46,7 +47,31 @@ function Tile({
   );
 }
 
+interface LatestPost {
+  title: string;
+  fishType: string | null;
+  weight: number | null;
+}
+
 export function HeroBento() {
+  const [latest, setLatest] = useState<LatestPost | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/posts?status=PUBLISHED")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((posts) => {
+        const catchPost = posts.find((p: any) => p.type === "CATCH");
+        if (catchPost) {
+          setLatest({
+            title: catchPost.title,
+            fishType: catchPost.fishType,
+            weight: catchPost.weight,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section aria-label="Первый экран">
       <div className="flex flex-col gap-4 md:grid md:grid-cols-4 md:grid-rows-2">
@@ -55,7 +80,7 @@ export function HeroBento() {
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.35),rgba(2,6,23,0.85))]" />
             <Image
               src="https://picsum.photos/1400/900?blur=1"
-              alt="Заглушка видео/фото воды"
+              alt="Кулагинский банк Каспийского моря"
               fill
               priority
               className="object-cover opacity-40"
@@ -66,7 +91,7 @@ export function HeroBento() {
           <div className="flex h-full flex-col justify-end p-6 sm:p-8">
             <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs text-slate-200">
               <Shield className="h-4 w-4 text-khaki-500" />
-              Expedition Design / Dark Mode
+              Кулагинский банк / Астраханская область
             </div>
 
             <h1 className="font-brutal text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
@@ -74,6 +99,7 @@ export function HeroBento() {
             </h1>
             <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-slate-200/90 sm:text-base">
               Трофейная рыбалка и подводная охота в 5 минутах от базы.
+              90 км от Астрахани.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -133,10 +159,12 @@ export function HeroBento() {
                 <span className="text-slate-300">2.5 – 3 м</span>
               </div>
               <div className="mt-2 text-xs text-slate-400">
-                По погоде обновляем в “Вестях”.
+                По погоде обновляем в &laquo;Вестях&raquo;.
               </div>
             </div>
 
+            {/* BACKLOG: Раздел «Подводная охота» — отдельная секция/страница.
+                См. CONTINUATION-BRIEF.md §2. Статус: не реализовано. */}
             <Link
               href="#spearfishing"
               className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-100 hover:text-white"
@@ -161,7 +189,7 @@ export function HeroBento() {
               <Shield className="h-5 w-5 text-slate-200/80" />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              Пакеты “всё включено” с баней, отдыхом и логистикой.
+              Пакеты &laquo;всё включено&raquo; с баней, отдыхом и логистикой.
             </p>
             <Link
               href="#pricing"
@@ -216,12 +244,14 @@ export function HeroBento() {
             </div>
 
             <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              Сегодня: Взяли жереха на 4 кг на струе.
+              {latest
+                ? `Сегодня: ${latest.title}${latest.fishType ? ` (${latest.fishType}${latest.weight ? `, ${latest.weight} кг` : ""})` : ""}`
+                : "Ожидаем сводку с воды..."}
             </p>
 
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/30 px-4 py-3 text-xs text-slate-400">
               <Target className="h-4 w-4 text-slate-300" />
-              Обновление: 12:40
+              {latest ? "Обновление: сейчас" : "Ожидаем данные..."}
             </div>
           </div>
         </Tile>
@@ -229,4 +259,3 @@ export function HeroBento() {
     </section>
   );
 }
-
