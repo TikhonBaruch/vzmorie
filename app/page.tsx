@@ -3,9 +3,12 @@ import { HeroBento } from "../components/HeroBento";
 import { ConditionsBlock } from "../components/ConditionsBlock";
 import { FeaturesSplit } from "../components/FeaturesSplit";
 import { TariffsBento } from "../components/TariffsBento";
+import { FleetGuides } from "../components/FleetGuides";
+import { RestSection } from "../components/RestSection";
+import { SpearfishingSection } from "../components/SpearfishingSection";
+import { DatesSection } from "../components/DatesSection";
 import { InfrastructureBento } from "../components/InfrastructureBento";
 import { LocationMap } from "../components/LocationMap";
-import { FleetGuides } from "../components/FleetGuides";
 import { Gallery } from "../components/Gallery";
 import { Footer } from "../components/Footer";
 
@@ -18,10 +21,13 @@ export default function Page() {
         <ConditionsBlock />
         <FeaturesSplit />
         <TariffsBento />
+        <FleetGuides />
+        <RestSection />
+        <SpearfishingSection />
         <InfrastructureBento />
         <LocationMap />
+        <DatesSection />
       </main>
-      <FleetGuides />
       <Gallery />
       <Footer />
     </div>
