@@ -93,7 +93,7 @@ export function HeroBento() {
     <section aria-label="Первый экран">
       <div className="flex flex-col gap-4 md:grid md:grid-cols-4 md:grid-rows-2">
         <Tile className="md:col-span-2 md:row-span-2" accent="terracotta">
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 z-0">
             <Image
               src={heroUrl}
               alt="Кулагинский банк Каспийского моря"
@@ -105,7 +105,7 @@ export function HeroBento() {
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.4),rgba(2,6,23,0.9))]" />
           </div>
 
-          <div className="flex h-full flex-col justify-end p-6 sm:p-8">
+          <div className="relative z-10 flex h-full flex-col justify-end p-6 sm:p-8">
             <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs text-slate-200">
               <Shield className="h-4 w-4 text-khaki-500" />
               Кулагинский банк / Астраханская область
