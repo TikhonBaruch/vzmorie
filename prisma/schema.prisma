@@ -189,3 +189,15 @@ enum MediaType {
   AUDIO
   DOCUMENT
 }
+
+model SiteImage {
+  id        String   @id @default(cuid())
+  key       String   @unique // hero, gallery_1, gallery_2, ...
+  url       String
+  alt       String?
+  sort      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_images")
+}

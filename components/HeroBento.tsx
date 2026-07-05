@@ -53,23 +53,40 @@ interface LatestPost {
   weight: number | null;
 }
 
+interface SiteImage {
+  key: string;
+  url: string;
+  alt: string | null;
+}
+
+const DEFAULT_HERO = "https://picsum.photos/1400/900?blur=1";
+
 export function HeroBento() {
   const [latest, setLatest] = useState<LatestPost | null>(null);
+  const [heroUrl, setHeroUrl] = useState(DEFAULT_HERO);
 
   useEffect(() => {
-    fetch("/api/admin/posts?status=PUBLISHED")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((posts) => {
-        const catchPost = posts.find((p: any) => p.type === "CATCH");
-        if (catchPost) {
-          setLatest({
-            title: catchPost.title,
-            fishType: catchPost.fishType,
-            weight: catchPost.weight,
-          });
-        }
-      })
-      .catch(() => {});
+    Promise.all([
+      fetch("/api/admin/posts?status=PUBLISHED")
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []),
+      fetch("/api/site-images")
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []),
+    ]).then(([posts, siteImages]: [any[], SiteImage[]]) => {
+      const catchPost = posts.find((p: any) => p.type === "CATCH");
+      if (catchPost) {
+        setLatest({
+          title: catchPost.title,
+          fishType: catchPost.fishType,
+          weight: catchPost.weight,
+        });
+      }
+      const hero = siteImages.find((img) => img.key === "hero");
+      if (hero?.url) {
+        setHeroUrl(hero.url);
+      }
+    });
   }, []);
 
   return (
@@ -79,7 +96,7 @@ export function HeroBento() {
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.35),rgba(2,6,23,0.85))]" />
             <Image
-              src="https://picsum.photos/1400/900?blur=1"
+              src={heroUrl}
               alt="Кулагинский банк Каспийского моря"
               fill
               priority

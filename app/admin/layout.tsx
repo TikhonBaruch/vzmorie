@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { LayoutDashboard, FileText, Package, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Package, Image, LogOut } from "lucide-react";
 
 const sidebar = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard },
   { label: "Публикации", href: "/admin/posts", icon: FileText },
   { label: "Товары", href: "/admin/products", icon: Package },
+  { label: "Фото сайта", href: "/admin/images", icon: Image },
 ];
 
 export default function AdminLayout({

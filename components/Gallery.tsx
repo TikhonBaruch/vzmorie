@@ -22,6 +22,12 @@ interface Post {
   publishedAt: string | null;
 }
 
+interface SiteImage {
+  key: string;
+  url: string;
+  alt: string | null;
+}
+
 const TYPE_LABELS: Record<string, string> = {
   CATCH: "Улов",
   WEATHER: "Погода",
@@ -35,18 +41,38 @@ const filters = ["Все", "CATCH", "NEWS", "EVENT"] as const;
 
 export function Gallery() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [siteImages, setSiteImages] = useState<SiteImage[]>([]);
   const [active, setActive] = useState<string>("Все");
 
   useEffect(() => {
-    fetch("/api/admin/posts?status=PUBLISHED")
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setPosts)
-      .catch(() => {});
+    Promise.all([
+      fetch("/api/admin/posts?status=PUBLISHED")
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []),
+      fetch("/api/site-images")
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []),
+    ]).then(([postsData, imagesData]) => {
+      setPosts(postsData);
+      setSiteImages(imagesData.filter((img: SiteImage) => img.key.startsWith("gallery_")));
+    });
   }, []);
 
+  const gallerySiteImages = siteImages.map((img, i) => ({
+    id: `site_${img.key}`,
+    title: img.alt || `Фото ${i + 1}`,
+    coverImage: img.url,
+    type: "SITE",
+    fishType: null,
+    weight: null,
+    location: null,
+    publishedAt: null,
+  }));
+
+  const allItems = [...gallerySiteImages, ...posts];
   const filtered = active === "Все"
-    ? posts
-    : posts.filter((p) => p.type === active);
+    ? allItems
+    : allItems.filter((p) => p.type === active);
 
   return (
     <section className="py-20">
