@@ -35,8 +35,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/stats").then((r) => (r.ok ? r.json() : null)),
-      fetch("/api/admin/posts?status=PENDING").then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/admin/stats", { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/admin/posts?status=PENDING", { credentials: "include" }).then((r) => (r.ok ? r.json() : [])),
     ])
       .then(([statsData, pendingData]) => {
         setStats(statsData);

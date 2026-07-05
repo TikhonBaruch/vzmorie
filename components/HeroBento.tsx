@@ -155,11 +155,13 @@ export function HeroBento() {
                   <span className="absolute inline-flex h-full w-full animate-pulseDot rounded-full bg-emerald-400/50" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
                 </span>
-                <span className="font-semibold">Прозрак</span>
-                <span className="text-slate-300">2.5 – 3 м</span>
+                <span className="font-semibold">Видимость на раскатах</span>
+              </div>
+              <div className="mt-1 text-xs text-slate-400">
+                Кристально чистая вода — фильтрация камышами.
               </div>
               <div className="mt-2 text-xs text-slate-400">
-                По погоде обновляем в &laquo;Вестях&raquo;.
+                Обновляем ежедневно в утренней сводке.
               </div>
             </div>
 

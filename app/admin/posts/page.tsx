@@ -61,9 +61,13 @@ export default function PostsPage() {
     const params = new URLSearchParams();
     if (filter !== "all") params.set("status", filter);
     if (search) params.set("search", search);
-    fetch(`/api/admin/posts?${params}`)
-      .then((r) => r.json())
-      .then(setPosts);
+    fetch(`/api/admin/posts?${params}`, { credentials: "include" })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to fetch");
+        return r.json();
+      })
+      .then(setPosts)
+      .catch(() => setPosts([]));
   }, [filter, search]);
 
   useEffect(() => {
@@ -392,7 +396,7 @@ function PostForm({
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className={inputClass}
-              placeholder="Кулажинский банк"
+              placeholder="Кулагинский банк"
             />
           </div>
           <div>

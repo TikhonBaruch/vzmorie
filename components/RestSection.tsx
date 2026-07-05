@@ -20,7 +20,7 @@ const amenities = [
   },
   {
     icon: Utensils,
-    title: "Три раза питание",
+    title: "Трёхразовое питание",
     description: "Завтрак, обед, ужин. Мужские порции. Рыбные блюда из свежего улова.",
     color: "text-khaki-500",
     ring: "ring-khaki-500/50",

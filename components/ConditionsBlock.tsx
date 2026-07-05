@@ -67,7 +67,7 @@ export function ConditionsBlock() {
   return (
     <motion.section
       {...fadeIn}
-      className="mb-8 rounded-2xl border border-sky-400/30 bg-sky-950/30 p-5"
+      className="mt-8 mb-12 rounded-2xl border border-sky-400/30 bg-sky-950/30 p-5"
     >
       <div className="flex items-center gap-3 mb-4">
         <span className="relative inline-flex h-2.5 w-2.5">

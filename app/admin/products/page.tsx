@@ -38,9 +38,13 @@ export default function ProductsPage() {
     const params = new URLSearchParams();
     if (filter !== "all") params.set("category", filter);
     if (search) params.set("search", search);
-    fetch(`/api/admin/products?${params}`)
-      .then((r) => r.json())
-      .then(setProducts);
+    fetch(`/api/admin/products?${params}`, { credentials: "include" })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to fetch");
+        return r.json();
+      })
+      .then(setProducts)
+      .catch(() => setProducts([]));
   }, [filter, search]);
 
   useEffect(() => {
@@ -49,7 +53,7 @@ export default function ProductsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Удалить товар?")) return;
-    await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+    await fetch(`/api/admin/products/${id}`, { method: "DELETE", credentials: "include" });
     setProducts((p) => p.filter((item) => item.id !== id));
   };
 
@@ -58,6 +62,7 @@ export default function ProductsPage() {
     if (!product) return;
     await fetch(`/api/admin/products/${id}`, {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: !product[field] }),
     });
