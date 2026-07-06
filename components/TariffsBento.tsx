@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Download, MessageCircle } from "lucide-react";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -17,14 +18,26 @@ const included = [
   "Заморозка и вакуумация трофеев.",
 ];
 
-const tariffs = [
+interface Tariff {
+  id: string;
+  name: string;
+  price: string;
+  description: string | null;
+  features: string[];
+  popular: boolean;
+}
+
+const fallbackTariffs: Tariff[] = [
   {
+    id: "fallback-1",
     name: "Стандарт",
     price: "7 100",
     description: "Комфортные условия для рыбалки",
     features: ["Проживание", "3-разовое питание", "Лодка + Егерь", "Баня"],
+    popular: false,
   },
   {
+    id: "fallback-2",
     name: "I категория",
     price: "7 400",
     description: "Улучшенные номера и сервис",
@@ -32,14 +45,29 @@ const tariffs = [
     popular: true,
   },
   {
+    id: "fallback-3",
     name: "Люкс",
     price: "9 100",
     description: "Максимальный комфорт на воде",
     features: ["Проживание", "3-разовое питание", "Лодка + Егерь", "Баня", "Кондиционер", "Отдельная территория"],
+    popular: false,
   },
 ];
 
 export function TariffsBento() {
+  const [tariffs, setTariffs] = useState<Tariff[]>(fallbackTariffs);
+
+  useEffect(() => {
+    fetch("/api/public/tariffs")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => {
+        if (data && data.length > 0) {
+          setTariffs(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section id="pricing" className="py-20">
       <motion.div
@@ -62,7 +90,7 @@ export function TariffsBento() {
       >
         {tariffs.map((tariff) => (
           <div
-            key={tariff.name}
+            key={tariff.id}
             className={`relative flex flex-col justify-between rounded-2xl border p-5 ${
               tariff.popular
                 ? "border-terracotta-500/60 bg-slate-950/70 shadow-[0_0_40px_rgba(234,88,12,0.25)] ring-1 ring-terracotta-600/40"
@@ -84,11 +112,13 @@ export function TariffsBento() {
               <div className="mt-2 text-2xl font-semibold text-slate-50">
                 {tariff.price} <span className="text-sm font-normal text-slate-400">руб / сутки</span>
               </div>
-              <p className="mt-1 text-xs text-slate-400">{tariff.description}</p>
+              {tariff.description && (
+                <p className="mt-1 text-xs text-slate-400">{tariff.description}</p>
+              )}
 
               <ul className="mt-4 space-y-2">
-                {tariff.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-slate-200">
+                {tariff.features.map((f, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-slate-200">
                     <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-khaki-500" />
                     {f}
                   </li>
@@ -97,7 +127,7 @@ export function TariffsBento() {
             </div>
 
             <a
-              href="https://wa.me/79093720573?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%C2%AB{tariff.name}%C2%BB"
+              href={`https://wa.me/79093720573?text=${encodeURIComponent(`Здравствуйте! Хочу забронировать тариф «${tariff.name}»`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${
