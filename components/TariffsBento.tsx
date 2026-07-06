@@ -46,10 +46,10 @@ export function TariffsBento() {
         {...fadeIn}
         className="max-w-3xl text-center"
       >
-        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl md:text-d-3xl">
+        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
           Соберите команду. Остальное — наша забота.
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-300 sm:text-base md:text-d-base">
+        <p className="mt-3 text-sm leading-relaxed text-slate-300 sm:text-base">
           Прозрачные пакеты «Всё включено» без скрытых доплат за бензин.
           Цена — за человека в сутки.
         </p>
@@ -78,17 +78,17 @@ export function TariffsBento() {
             )}
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400 md:text-d-xs">
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 {tariff.name}
               </div>
-              <div className="mt-2 text-2xl font-semibold text-slate-50 md:text-d-2xl">
-                {tariff.price} <span className="text-sm font-normal text-slate-400 md:text-d-sm">руб / сутки</span>
+              <div className="mt-2 text-2xl font-semibold text-slate-50">
+                {tariff.price} <span className="text-sm font-normal text-slate-400">руб / сутки</span>
               </div>
-              <p className="mt-1 text-xs text-slate-400 md:text-d-xs">{tariff.description}</p>
+              <p className="mt-1 text-xs text-slate-400">{tariff.description}</p>
 
               <ul className="mt-4 space-y-2">
                 {tariff.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-slate-200 md:text-d-sm">
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-200">
                     <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-khaki-500" />
                     {f}
                   </li>
@@ -118,12 +118,12 @@ export function TariffsBento() {
         transition={{ ...fadeIn.transition, delay: 0.1 } as const}
         className="mt-8 rounded-2xl border border-slate-800 bg-slate-950/60 p-5"
       >
-        <div className="text-xs font-semibold uppercase tracking-wide text-slate-400 md:text-d-xs">
+        <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           Что включено во все тарифы
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {included.map((item) => (
-            <div key={item} className="flex items-start gap-2 text-sm text-slate-200 md:text-d-sm">
+            <div key={item} className="flex items-start gap-2 text-sm text-slate-200">
               <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-khaki-500" />
               <span>{item}</span>
             </div>

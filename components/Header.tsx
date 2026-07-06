@@ -60,10 +60,10 @@ export function Header() {
               href="/"
               className="group inline-flex items-baseline gap-3 whitespace-nowrap"
             >
-              <span className="font-brutal text-lg font-semibold tracking-[0.18em] text-slate-100 md:text-d-xl">
+              <span className="font-brutal text-lg font-semibold tracking-[0.18em] text-slate-100">
                 VZMORIE
               </span>
-              <span className="hidden max-w-[34ch] truncate text-xs text-slate-400 sm:block md:text-d-xs">
+              <span className="hidden max-w-[34ch] truncate text-xs text-slate-400 sm:block">
                 База-гибрид на Кулагинском банке
               </span>
             </Link>
@@ -74,7 +74,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-xl px-3 py-2 text-sm text-slate-300 hover:bg-slate-900 hover:text-slate-50 md:text-d-sm"
+                className="rounded-xl px-3 py-2 text-sm text-slate-300 hover:bg-slate-900 hover:text-slate-50"
               >
                 {item.label}
               </Link>
@@ -82,7 +82,7 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <div className="hidden items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/40 px-3 py-2 text-xs text-slate-200 lg:flex md:text-d-xs">
+            <div className="hidden items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/40 px-3 py-2 text-xs text-slate-200 lg:flex">
               <div className="flex items-center gap-1.5">
                 <Thermometer className="h-4 w-4 text-khaki-500" />
                 <span className="tabular-nums">{weather.temp}</span>
@@ -96,7 +96,7 @@ export function Header() {
 
             <Link
               href="#dates"
-              className="inline-flex items-center gap-2 rounded-2xl bg-terracotta-600 px-4 py-2 text-sm font-semibold text-white shadow-tactical shadow-black/30 ring-1 ring-terracotta-500/40 transition hover:bg-terracotta-500 md:text-d-sm"
+              className="inline-flex items-center gap-2 rounded-2xl bg-terracotta-600 px-4 py-2 text-sm font-semibold text-white shadow-tactical shadow-black/30 ring-1 ring-terracotta-500/40 transition hover:bg-terracotta-500"
             >
               <Waves className="h-4 w-4" />
               Узнать даты

@@ -17,7 +17,7 @@ export function FeaturesSplit() {
         {...fadeIn}
         className="text-center"
       >
-        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl md:text-d-3xl">
+        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
           Вода для добычи. Земля для души.
         </h2>
       </motion.div>
@@ -33,10 +33,10 @@ export function FeaturesSplit() {
               <ShipWheel className="h-5 w-5 text-slate-100" />
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400 md:text-d-xs">
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 ВОДА
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-200 md:text-d-sm">
+              <p className="mt-2 text-sm leading-relaxed text-slate-200">
                 Дебаркадер на русле. Вы спите в 10 метрах от миграционных путей
                 рыбы. Не тратьте бензин и час времени на дорогу по утрам.
               </p>
@@ -50,10 +50,10 @@ export function FeaturesSplit() {
               <Flame className="h-5 w-5 text-terracotta-400" />
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-slate-300 md:text-d-xs">
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-300">
                 ЗЕМЛЯ
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-200 md:text-d-sm">
+              <p className="mt-2 text-sm leading-relaxed text-slate-200">
                 Твердый берег. После качки и тяжелого дня — жаркая баня на
                 дровах, дым коптильни и просторная беседка для ваших баек.
               </p>

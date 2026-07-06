@@ -74,7 +74,7 @@ export function ConditionsBlock() {
           <span className="absolute inline-flex h-full w-full animate-pulseDot rounded-full bg-sky-400/50" />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-400" />
         </span>
-        <h3 className="font-brutal text-lg font-semibold text-slate-100 md:text-d-lg">
+        <h3 className="font-brutal text-lg font-semibold text-slate-100">
           Условия сегодня
         </h3>
         <span className="text-xs text-slate-400 ml-auto">

@@ -26,10 +26,10 @@ export function DatesSection() {
         {...fadeIn}
         className="max-w-3xl text-center"
       >
-        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl md:text-d-3xl">
+        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl">
           Даты заезда
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-base md:text-d-base">
+        <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-base">
           Выберите удобные даты или свяжитесь с нами для индивидуального подбора.
         </p>
       </motion.div>
