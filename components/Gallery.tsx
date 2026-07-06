@@ -138,7 +138,7 @@ export function Gallery() {
         )}
       </motion.div>
 
-      {hasMore && (
+      {posts.length > 0 && (
         <motion.div
           {...fadeIn}
           transition={{ ...fadeIn.transition, delay: 0.15 } as const}
