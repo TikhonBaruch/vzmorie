@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Calendar, Phone, MessageCircle, Send } from "lucide-react";
 
@@ -10,16 +11,45 @@ const fadeIn = {
   transition: { duration: 0.5, ease: "easeOut" } as const
 };
 
-const availableDates = [
-  { date: "11-13 июля", spots: 2, status: "available" },
-  { date: "18-20 июля", spots: 4, status: "available" },
-  { date: "25-27 июля", spots: 1, status: "limited" },
-  { date: "1-3 августа", spots: 6, status: "available" },
-  { date: "8-10 августа", spots: 3, status: "available" },
-  { date: "15-17 августа", spots: 0, status: "booked" },
+interface BookingDate {
+  id: string;
+  date: string;
+  spots: number;
+  status: "available" | "limited" | "booked";
+}
+
+interface DatesConfig {
+  visible: boolean;
+  dates: BookingDate[];
+}
+
+const fallbackDates: BookingDate[] = [
+  { id: "1", date: "11-13 июля", spots: 2, status: "available" },
+  { id: "2", date: "18-20 июля", spots: 4, status: "available" },
+  { id: "3", date: "25-27 июля", spots: 1, status: "limited" },
+  { id: "4", date: "1-3 августа", spots: 6, status: "available" },
+  { id: "5", date: "8-10 августа", spots: 3, status: "available" },
+  { id: "6", date: "15-17 августа", spots: 0, status: "booked" },
 ];
 
 export function DatesSection() {
+  const [config, setConfig] = useState<DatesConfig>({ visible: true, dates: fallbackDates });
+
+  useEffect(() => {
+    fetch("/api/public/dates")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && data.dates) {
+          setConfig(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  if (!config.visible || config.dates.length === 0) {
+    return null;
+  }
+
   return (
     <section id="dates" className="py-20">
       <motion.div
@@ -46,9 +76,9 @@ export function DatesSection() {
         </div>
 
         <div className="space-y-3">
-          {availableDates.map((item) => (
+          {config.dates.map((item) => (
             <div
-              key={item.date}
+              key={item.id}
               className={`flex items-center justify-between rounded-xl border p-4 ${
                 item.status === "booked"
                   ? "border-slate-800 bg-slate-950/40 opacity-60"
@@ -80,7 +110,7 @@ export function DatesSection() {
                 </div>
                 {item.status !== "booked" && (
                   <a
-                    href={`https://wa.me/79093720573?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BD%D0%B0%20${item.date}`}
+                    href={`https://wa.me/79093720573?text=${encodeURIComponent(`Здравствуйте! Хочу забронировать на ${item.date}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-xl bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-terracotta-500"

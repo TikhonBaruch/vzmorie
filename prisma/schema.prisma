@@ -201,3 +201,12 @@ model SiteImage {
 
   @@map("site_images")
 }
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
