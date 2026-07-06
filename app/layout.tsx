@@ -4,7 +4,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Взморье — рыболовно-охотничья база",
-  description: "Премиальная база-гибрид на Кулагинском банке"
+  description: "Премиальная база-гибрид на Кулагинском банке",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
