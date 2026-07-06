@@ -12,6 +12,8 @@ import {
   Scale,
   MessageSquare,
 } from "lucide-react";
+import { Header } from "../../../components/Header";
+import { Footer } from "../../../components/Footer";
 
 const typeLabels: Record<string, string> = {
   CATCH: "Улов",
@@ -58,8 +60,9 @@ export default function PostPage({
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="container-tactical py-24">
+    <div className="text-slate-100">
+      <Header />
+      <main className="container-tactical pb-16 pt-24 sm:pt-28">
         <Link
           href="/posts"
           className="mb-6 inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200"
@@ -229,7 +232,8 @@ export default function PostPage({
             </div>
           )}
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

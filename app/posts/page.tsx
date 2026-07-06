@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Calendar, MapPin, Fish } from "lucide-react";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+
 const TYPE_LABELS: Record<string, string> = {
   CATCH: "Улов",
   WEATHER: "Погода",
@@ -46,23 +49,24 @@ export default function PostsPage() {
     : posts.filter((p) => p.type === active);
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="container-tactical py-24">
-        {/* Header */}
-        <div className="mb-8 flex items-center gap-4">
+    <div className="text-slate-100">
+      <Header />
+      <main className="container-tactical pb-16 pt-24 sm:pt-28">
+        {/* Back link */}
+        <div className="mb-8">
           <Link
             href="/"
-            className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-slate-100"
+            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
+            На главную
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-slate-100">Вести с воды</h1>
-            <p className="mt-1 text-sm text-slate-400">
-              Все публикации с воды — уловы, новости, события
-            </p>
-          </div>
         </div>
+
+        <h1 className="mb-2 text-3xl font-bold text-slate-100">Вести с воды</h1>
+        <p className="mb-8 text-sm text-slate-400">
+          Все публикации с воды — уловы, новости, события
+        </p>
 
         {/* Filters */}
         <div className="mb-8 flex flex-wrap gap-2">
@@ -144,7 +148,8 @@ export default function PostsPage() {
         <div className="mt-6 text-center text-xs text-slate-500">
           {filtered.length} {filtered.length === 1 ? "публикация" : filtered.length < 5 ? "публикации" : "публикаций"}
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
