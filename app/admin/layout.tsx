@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { LayoutDashboard, FileText, Package, Image, Cloud, DollarSign, Calendar, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Package, Image, Cloud, DollarSign, Calendar, Type, LogOut } from "lucide-react";
 
 const sidebar = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard },
+  { label: "Hero блок", href: "/admin/hero", icon: Type },
   { label: "Публикации", href: "/admin/posts", icon: FileText },
   { label: "Условия", href: "/admin/conditions", icon: Cloud },
   { label: "Тарифы", href: "/admin/tariffs", icon: DollarSign },

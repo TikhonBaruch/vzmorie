@@ -59,11 +59,52 @@ interface SiteImage {
   alt: string | null;
 }
 
+interface HeroConfig {
+  badge: string;
+  title: string;
+  subtitle: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  infoLeft: string;
+  infoRight: string;
+  tileDivingTitle: string;
+  tileDivingSubtitle: string;
+  tileOrganizerTitle: string;
+  tileOrganizerSubtitle: string;
+  tileOrganizerText: string;
+  tileTrophyTitle: string;
+  tileTrophySubtitle: string;
+  tileTrophyText: string;
+  tileLiveTitle: string;
+  tileLiveSubtitle: string;
+}
+
 const DEFAULT_HERO = "https://picsum.photos/1400/900";
+
+const defaultConfig: HeroConfig = {
+  badge: "Кулагинский банк / Астраханская область",
+  title: "ЖИВИ НА ВОДЕ. ОТДЫХАЙ НА ЗЕМЛЕ.",
+  subtitle: "Трофейная рыбалка и подводная охота в 5 минутах от базы. 90 км от Астрахани.",
+  ctaPrimary: "Узнать даты и места",
+  ctaSecondary: "Смотреть тарифы",
+  infoLeft: "Кулагинский банк",
+  infoRight: "5 минут до воды",
+  tileDivingTitle: "Сезон ПО открыт",
+  tileDivingSubtitle: "Для подвохов",
+  tileOrganizerTitle: "Едете компанией?",
+  tileOrganizerSubtitle: "Для организатора",
+  tileOrganizerText: "Пакеты «всё включено» с баней, отдыхом и логистикой.",
+  tileTrophyTitle: "Трофеи банка",
+  tileTrophySubtitle: "Для трофейщика",
+  tileTrophyText: "Ямы и перекаты рядом — работаем по точкам быстро.",
+  tileLiveTitle: "Вести с воды",
+  tileLiveSubtitle: "Live-статус",
+};
 
 export function HeroBento() {
   const [latest, setLatest] = useState<LatestPost | null>(null);
   const [heroUrl, setHeroUrl] = useState(DEFAULT_HERO);
+  const [config, setConfig] = useState<HeroConfig>(defaultConfig);
 
   useEffect(() => {
     Promise.all([
@@ -73,7 +114,10 @@ export function HeroBento() {
       fetch("/api/site-images")
         .then((r) => (r.ok ? r.json() : []))
         .catch(() => []),
-    ]).then(([posts, siteImages]: [any[], SiteImage[]]) => {
+      fetch("/api/public/hero")
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null),
+    ]).then(([posts, siteImages, heroConfig]: [any[], SiteImage[], HeroConfig | null]) => {
       const catchPost = posts.find((p: any) => p.type === "CATCH");
       if (catchPost) {
         setLatest({
@@ -85,6 +129,9 @@ export function HeroBento() {
       const hero = siteImages.find((img) => img.key === "hero");
       if (hero?.url) {
         setHeroUrl(hero.url);
+      }
+      if (heroConfig) {
+        setConfig(heroConfig);
       }
     });
   }, []);
@@ -108,15 +155,14 @@ export function HeroBento() {
           <div className="relative z-10 flex h-full flex-col justify-end p-6 sm:p-8">
             <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs text-slate-200">
               <Shield className="h-4 w-4 text-khaki-500" />
-              Кулагинский банк / Астраханская область
+              {config.badge}
             </div>
 
             <h1 className="font-brutal text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
-              ЖИВИ НА ВОДЕ. ОТДЫХАЙ НА ЗЕМЛЕ.
+              {config.title}
             </h1>
             <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-slate-200/90 sm:text-base">
-              Трофейная рыбалка и подводная охота в 5 минутах от базы.
-              90 км от Астрахани.
+              {config.subtitle}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -124,14 +170,14 @@ export function HeroBento() {
                 href="#dates"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-terracotta-600 px-5 py-3 text-sm font-semibold text-white ring-1 ring-terracotta-500/40 transition hover:bg-terracotta-500 sm:w-auto"
               >
-                Узнать даты и места
+                {config.ctaPrimary}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="#pricing"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-950/30 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-950/50 sm:w-auto"
               >
-                Смотреть тарифы
+                {config.ctaSecondary}
               </Link>
             </div>
 
@@ -139,13 +185,13 @@ export function HeroBento() {
               <div className="rounded-xl border border-slate-800 bg-slate-950/25 px-3 py-2">
                 <div className="flex items-center gap-2">
                   <Waves className="h-4 w-4 text-slate-200" />
-                  <span>Кулагинский банк</span>
+                  <span>{config.infoLeft}</span>
                 </div>
               </div>
               <div className="rounded-xl border border-slate-800 bg-slate-950/25 px-3 py-2">
                 <div className="flex items-center gap-2">
                   <Target className="h-4 w-4 text-khaki-500" />
-                  <span>5 минут до воды</span>
+                  <span>{config.infoRight}</span>
                 </div>
               </div>
             </div>
@@ -157,10 +203,10 @@ export function HeroBento() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wide text-khaki-500">
-                  Для подвохов
+                  {config.tileDivingSubtitle}
                 </div>
                 <div className="mt-1 text-lg font-semibold text-slate-50">
-                  Сезон ПО открыт
+                  {config.tileDivingTitle}
                 </div>
               </div>
               <Radar className="h-5 w-5 text-slate-200/80" />
@@ -182,8 +228,6 @@ export function HeroBento() {
               </div>
             </div>
 
-            {/* BACKLOG: Раздел «Подводная охота» — отдельная секция/страница.
-                См. CONTINUATION-BRIEF.md §2. Статус: не реализовано. */}
             <Link
               href="#spearfishing"
               className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-100 hover:text-white"
@@ -199,16 +243,16 @@ export function HeroBento() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wide text-terracotta-500">
-                  Для организатора
+                  {config.tileOrganizerSubtitle}
                 </div>
                 <div className="mt-1 text-lg font-semibold text-slate-50">
-                  Едете компанией?
+                  {config.tileOrganizerTitle}
                 </div>
               </div>
               <Shield className="h-5 w-5 text-slate-200/80" />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              Пакеты &laquo;всё включено&raquo; с баней, отдыхом и логистикой.
+              {config.tileOrganizerText}
             </p>
             <Link
               href="#pricing"
@@ -225,16 +269,16 @@ export function HeroBento() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wide text-slate-300">
-                  Для трофейщика
+                  {config.tileTrophySubtitle}
                 </div>
                 <div className="mt-1 text-sm font-semibold text-slate-50">
-                  Трофеи банка
+                  {config.tileTrophyTitle}
                 </div>
               </div>
               <Fish className="h-5 w-5 text-khaki-500" />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              Ямы и перекаты рядом — работаем по точкам быстро.
+              {config.tileTrophyText}
             </p>
             <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/30 px-4 py-3 text-xs text-slate-400">
               Снасти / приманки — подскажем по сезону.
@@ -252,11 +296,11 @@ export function HeroBento() {
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                   </span>
                   <div className="text-xs font-semibold uppercase tracking-wide text-slate-300">
-                    Live-статус
+                    {config.tileLiveSubtitle}
                   </div>
                 </div>
                 <div className="mt-1 text-lg font-semibold text-slate-50">
-                  Вести с воды
+                  {config.tileLiveTitle}
                 </div>
               </div>
               <Waves className="h-5 w-5 text-slate-200/80" />
