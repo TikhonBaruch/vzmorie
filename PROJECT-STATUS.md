@@ -1,7 +1,7 @@
 # ВЗМОРИЕ — Отчёт о состоянии проекта
 
-> Дата: 05.07.2026
-> Коммит: `875406a` (fix: typo, grammar, sections, API)
+> Дата: 06.07.2026
+> Коммит: `e1c4bbd` (fix: resolve all identified bugs)
 > Деплой: https://vzmorie-five.vercel.app
 
 ---
@@ -27,166 +27,159 @@
 | Задача | Статус | Детали |
 |---|---|---|
 | Seed данных | **ГОТОВО** | `npx prisma db seed` выполнен: 12 тегов, админ, 3 демо-поста |
-| HeroBento → API | **ЧАСТИЧНО** | Live-статус тайл подключён к API, фон — picsum.photos (плейсхолдер) |
-| Gallery → API | **ГОТОВО** | Тянет опубликованные посты из `/api/admin/posts` |
-| TariffsBento → API | **НЕ ГОТОВО** | Тарифы захардкожены в статическом массиве (не из БД) |
-| Реальные контакты | **ГОТОВО** | vzmorie@rambler.ru, +7 (909) 372-05-73 в Footer, DatesSection |
-| Реальные координаты | **ГОТОВО** | 45.758469, 48.136073 в Footer, LocationMap, DatesSection |
-| Реальные тарифы | **ГОТОВО** | Значения верные (7100/7400/9100), но захардкожены |
-| Фото партнёров | **НЕ ГОТОВО** | HeroBento: picsum.photos, нет ссылок на domik.travel и т.д. |
+| HeroBento → API | **ГОТОВО** | Live-статус + hero из `/api/public/posts` |
+| Gallery → API | **ГОТОВО** | Тянет посты из `/api/public/posts` + site-images |
+| TariffsBento → API | **НЕ ГОТОВО** | Тарифы захардкожены (не из БД) |
+| Реальные контакты | **ГОТОВО** | vzmorie@rambler.ru, +7 (909) 372-05-73 |
+| Реальные координаты | **ГОТОВО** | 45.758469, 48.136073 |
+| Реальные тарифы | **ГОТОВО** | Значения верные (7100/7400/9100), захардкожены |
+| Фото партнёров | **ЧАСТИЧНО** | Система site-images работает, фото загружаются через админку |
 | Смена пароля админки | **ГОТОВО** | Пароль обновлён в `.env` |
 
 ### §1.2 Постинг с воды
 
 | Задача | Статус | Детали |
 |---|---|---|
-| Webhook → PENDING пост | **ГОТОВО** | `webhook/route.ts:131-168` — фото+текст → CATCH/PENDING |
-| Модерация в /admin/posts | **ГОТОВО** | Кнопки одобрения/отклонения, фильтры, поиск |
-| Утренняя сводка — авто-публикация | **ГОТОВО** | WEATHER посты создаются сразу PUBLISHED (route.ts:183) |
-| Шаблон сводки (4 вопроса) | **ГОТОВО** | `telegram.ts:125-138` — погода/что клюёт/уровень воды/чистота воды |
-| Блок «Условия сегодня» | **ГОТОВО** | `ConditionsBlock.tsx` парсит сводку, подключён к `/api/conditions` |
-| Header с погодой/водой | **ГОТОВО** | `Header.tsx` тянет данные из `/api/conditions` в реальном времени |
-| Mini App | **НЕ ГОТОВО** | Заглушка, не реализована |
+| Webhook → PENDING пост | **ГОТОВО** | фото+текст → CATCH/PENDING |
+| Модерация в /admin/posts | **ГОТОВО** | Кнопки одобрения/отклонения |
+| Утренняя сводка — авто-публикация | **ГОТОВО** | WEATHER посты PUBLISHED |
+| Шаблон сводки (4 вопроса) | **ГОТОВО** | погода/что клюёт/уровень воды/чистота воды |
+| Блок «Условия сегодня» | **ГОТОВО** | ConditionsBlock парсит сводку |
+| Header с погодой/водой | **ГОТОВО** | Реалтайм из `/api/conditions` |
+| Mini App | **НЕ ГОТОВО** | Заглушка |
 
 ### §2 Реестр задуманного (BACKLOG)
 
-| Элемент | Статус | Детали |
-|---|---|---|
-| `#fleet` → FleetGuides | **ГОТОВО** | Лодки, эхолокация, егеря (2 персоны) |
-| `#rest` → RestSection | **ГОТОВО** | 6 amenities + доп. информация (барбекю, парковка, Wi-Fi) |
-| `#spearfishing` → SpearfishingSection | **ГОТОВО** | Прозрак, видимость, правила для подвохов |
-| `#dates` → DatesSection | **ГОТОВО** | Календарь дат + бронирование через WhatsApp + FAQ |
-| PDF-презентация | **НЕ ГОТОВО** | |
-| Фильтр галереи по виду рыбы | **НЕ ГОТОВО** | Базовый фильтр по типу поста есть, по виду рыбы — нет |
-| Раздел «Природа» (лотосы) | **НЕ ГОТОВО** | |
-
-### §3 После демо-спринта (преждевременно сделано)
-
-| Задача | Статус | Детали |
-|---|---|---|
-| S3-хранилище | **ЧАСТИЧНО** | `s3.ts` + presign endpoint есть, ключи пустые |
-| middleware.ts для Next.js 16 | **НЕ СДЕЛАН** | Обычный `withAuth` |
-| Ролевой доступ | **СДЕЛАН** | `adminProcedure` проверяет role, JWT хранит role |
-| Погодный API | **НЕ СДЕЛАН** | Данные только из ручных сводок |
-| Yandex Maps / 2GIS | **НЕ СДЕЛАН** | `LocationMap.tsx` — CSS-заглушка |
-| Email-рассылки (Resend) | **СДЕЛАН** | Полный subscriber router, `RESEND_API_KEY` пустой |
+| Элемент | Статус |
+|---|---|
+| `#fleet` → FleetGuides | **ГОТОВО** |
+| `#rest` → RestSection | **ГОТОВО** |
+| `#spearfishing` → SpearfishingSection | **ГОТОВО** |
+| `#dates` → DatesSection | **ГОТОВО** |
+| PDF-презентация | **НЕ ГОТОВО** |
+| Фильтр галереи по виду рыбы | **НЕ ГОТОВО** |
+| Раздел «Природа» (лотосы) | **НЕ ГОТОВО** |
 
 ---
 
-## 3. Структура проекта
+## 3. Реализовано в этой сессии
+
+### Добавлено
+- **Секции сайта**: FleetGuides, RestSection, SpearfishingSection, DatesSection
+- **API**: `/api/conditions`, `/api/telegram/setup`, `/api/telegram/status`, `/api/public/posts`, `/api/upload`
+- **Управление фото**: SiteImage модель, `/admin/images`, загрузка файлов
+- **Карта**: OSM тайлы на фоне, сворачиваемые карточки на мобилке
+- **Favicon**: SVG волна в фирменных цветах
+- **Безопасность**: Исправлен auth bypass, защищены telegram эндпоинты
+
+### Исправлено
+- Типо «ПаспортRequired» → «Нужен паспорт»
+- Грамматика: «филирования» → «филеирования», «Три раза питание» → «Трёхразовое питание»
+- Hero z-index: текст теперь поверх картинки
+- Weight icon → Scale (lucide-react)
+- callback_data парсинг (handle colons in titles)
+- Пустая ссылка Telegram в DatesSection
+
+---
+
+## 4. Структура проекта
 
 ```
 vzmorie/
 ├── app/
 │   ├── admin/
-│   │   ├── layout.tsx          # Сайдбар + навигация + logout
-│   │   ├── login/page.tsx      # Страница входа
-│   │   ├── page.tsx            # Дашборд (статистика + модерация)
-│   │   ├── posts/page.tsx      # Управление публикациями (CRUD)
-│   │   └── products/page.tsx   # Управление товарами (CRUD)
+│   │   ├── images/page.tsx      # Управление фото сайта
+│   │   ├── layout.tsx           # Сайдбар + навигация
+│   │   ├── login/page.tsx       # Страница входа
+│   │   ├── page.tsx             # Дашборд
+│   │   ├── posts/page.tsx       # Управление публикациями
+│   │   └── products/page.tsx    # Управление товарами
 │   ├── api/
-│   │   ├── admin/
-│   │   │   ├── posts/          # REST: CRUD публикаций
-│   │   │   ├── products/       # REST: CRUD товаров
-│   │   │   ├── stats/          # REST: статистика дашборда
-│   │   │   └── conditions/     # REST: CRUD условий (погода/вода)
-│   │   ├── auth/[...nextauth]/ # NextAuth (email/password)
-│   │   ├── conditions/         # GET: последние опубликованные условия
-│   │   ├── telegram/
-│   │   │   ├── webhook/        # Telegram webhook (секрет + модерация)
-│   │   │   ├── setup/          # Установка webhook через Vercel (США)
-│   │   │   └── status/         # Статус webhook + пользователей
-│   │   ├── trpc/[trpc]/        # tRPC API
-│   │   └── upload/presign/     # S3 presigned URL
-│   ├── miniapp/page.tsx        # Telegram Mini App (заглушка)
-│   ├── posts/
-│   │   ├── page.tsx            # Лента публикаций
-│   │   └── [slug]/page.tsx     # Детали публикации
-│   ├── layout.tsx              # Root layout (Providers)
-│   ├── page.tsx                # Главная (лендинг)
+│   │   ├── admin/               # CRUD для админки
+│   │   ├── conditions/          # GET: погодные условия
+│   │   ├── public/posts/        # GET: публичный API постов
+│   │   ├── site-images/         # CRUD для фото сайта
+│   │   ├── telegram/            # Webhook, setup, status
+│   │   ├── trpc/                # tRPC API
+│   │   └── upload/              # Загрузка файлов
+│   ├── posts/                   # Лента + детали постов
+│   ├── miniapp/                 # Telegram Mini App (заглушка)
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Главная (лендинг)
 │   └── globals.css
 ├── components/
-│   ├── Header.tsx              # Sticky header с погодой/водой в реальном времени
-│   ├── HeroBento.tsx           # Главный экран bento-сетка
-│   ├── ConditionsBlock.tsx     # «Условия сегодня» — парсит сводку из БД
-│   ├── FeaturesSplit           # Преимущества
-│   ├── TariffsBento.tsx        # Тарифы (захардкожены)
-│   ├── FleetGuides.tsx         # Флот и егеря
-│   ├── RestSection.tsx         # Баня и отдых
-│   ├── SpearfishingSection.tsx # Подводная охота
-│   ├── DatesSection.tsx        # Даты заезда + бронирование
-│   ├── InfrastructureBento.tsx # Инфраструктура
-│   ├── LocationMap.tsx         # Карта (CSS-заглушка)
-│   ├── Gallery.tsx             # Галерея (из API)
-│   ├── Footer.tsx              # Подвал с контактами
-│   └── Providers.tsx           # SessionProvider + tRPC + QueryClient
+│   ├── Header.tsx               # Sticky header с погодой
+│   ├── HeroBento.tsx            # Главный экран
+│   ├── ConditionsBlock.tsx      # «Условия сегодня»
+│   ├── FeaturesSplit            # Преимущества
+│   ├── TariffsBento.tsx         # Тарифы
+│   ├── FleetGuides.tsx          # Флот и егеря
+│   ├── RestSection.tsx          # Баня и отдых
+│   ├── SpearfishingSection.tsx  # Подводная охота
+│   ├── DatesSection.tsx         # Даты заезда
+│   ├── InfrastructureBento.tsx  # Инфраструктура
+│   ├── LocationMap.tsx          # Карта с OSM тайлами
+│   ├── Gallery.tsx              # Галерея
+│   └── Footer.tsx               # Подвал
 ├── prisma/
-│   ├── schema.prisma           # 9 моделей + 5 enum
-│   └── seed.ts                 # Тестовые данные (выполнен)
+│   ├── schema.prisma            # 10 моделей + 5 enum
+│   └── seed.ts                  # Тестовые данные
 ├── src/
-│   ├── components/telegram/PostForm.tsx  # Форма создания поста (Mini App)
-│   ├── lib/
-│   │   ├── auth.ts             # NextAuth config
-│   │   ├── prisma.ts           # Prisma client singleton
-│   │   ├── s3.ts               # S3 upload utility (ключи пустые)
-│   │   ├── telegram.ts         # Telegram API (send, notify, webhook)
-│   │   └── trpc.ts             # tRPC client
-│   ├── server/
-│   │   ├── trpc.ts             # tRPC server + middleware (role check)
-│   │   └── routers/            # post, user, tag, subscriber
-│   └── types/next-auth.d.ts
-├── middleware.ts                # Защита /admin + /api/admin
-├── .env                        # Переменные окружения
-└── tailwind.config.ts
+│   ├── components/
+│   │   ├── FileUpload.tsx       # Компонент загрузки файлов
+│   │   └── telegram/PostForm.tsx
+│   ├── lib/                     # auth, prisma, s3, telegram, trpc
+│   ├── server/                  # tRPC server + routers
+│   └── types/
+├── public/
+│   └── favicon.svg              # Favicon (волна)
+└── middleware.ts                 # Защита /admin
 ```
-
----
-
-## 4. Модели данных (Prisma)
-
-| Модель | Назначение | Статус |
-|---|---|---|
-| User | Пользователи (admin, telegram, web) | ✅ Готово |
-| Post | Публикации (уловы, погода, события) | ✅ Готово |
-| Tag | Теги для постов | ✅ Готово |
-| Media | Медиафайлы к постам | ✅ Готово |
-| Comment | Комментарии (вложенные) | ✅ Готово |
-| Product | Товары магазина | ✅ Готово |
-| Subscriber | Подписчики на рассылку | ✅ Готово |
-| Account | NextAuth аккаунты | ✅ Готово |
-| Session | NextAuth сессии | ✅ Готово |
-
-### Enum'ы
-- `UserRole`: USER, MODERATOR, ADMIN
-- `PostType`: CATCH, WEATHER, WATER_LEVEL, EVENT, PROMO, NEWS
-- `PostStatus`: DRAFT, PENDING, PUBLISHED, ARCHIVED
-- `MediaType`: IMAGE, VIDEO, AUDIO, DOCUMENT
 
 ---
 
 ## 5. Текущие проблемы
 
-### Критичные (для демо)
-- [ ] TariffsBento захардкожен — не подключён к БД
-- [ ] HeroBento фон — picsum.photos вместо реальных фото партнёров
-- [ ] 10 коммитов не запушены в origin (нет git credentials на сервере)
-
-### Важные
-- [ ] S3 ключи пустые — загрузка файлов не работает
-- [ ] Resend API ключ пустой — email рассылки нет
-- [ ] Mini App — заглушка, не реализована
-- [ ] LocationMap — CSS-заглушка, реальной карты нет
-- [ ] Устаревший BACKLOG-комментарий в HeroBento.tsx:168
+### Для решения
+- [ ] TariffsBento захардкожен — не из БД
+- [ ] HeroBento фон — picsum.photos (нужны реальные фото)
+- [ ] Mini App — заглушка
+- [ ] S3 ключи пустые — загрузка файлов не работает на Vercel
+- [ ] Нет push в origin (git credentials отсутствуют)
 
 ### Известные ограничения
-- Auth работает только на email/password из `.env` (нет регистрации)
 - `middleware.ts` deprecated в Next.js 16 (нужен `proxy`)
 - DatesSection — хардкод дат (не из БД)
-- Нет SEO-метаданных для страниц постов (generateMetadata)
+- Нет SEO-метаданных для страниц постов
 
 ---
 
-## 6. Среда и доступы
+## 6. Планы на масштабирование
+
+### Фаза 2 — Контент
+- [ ] Подключить реальные фото партнёров
+- [ ] Подключить тарифы из БД
+- [ ] Реализовать Telegram Mini App
+- [ ] Добавить PDF-презентацию базы
+
+### Фаза 3 — Интеграции
+- [ ] S3 (Yandex Object Storage) для хранения файлов
+- [ ] Погодный API (OpenWeatherMap)
+- [ ] Яндекс.Карты / 2ГИС (полноценная интерактивная карта)
+- [ ] Email-рассылки (Resend)
+- [ ] Голосовые сообщения (Speech-to-Text)
+
+### Фаза 4 — Масштабирование
+- [ ] Ролевой доступ в UI (USER/MODERATOR/ADMIN)
+- [ ] Фильтр галереи по виду рыбы
+- [ ] Система рейтинга и лидерборд
+- [ ] Push-уведомления
+- [ ] Аналитика (Yandex.Metrika)
+- [ ] CRM интеграция
+
+---
+
+## 7. Среда и доступы
 
 | Ресурс | Значение |
 |---|---|
@@ -195,49 +188,26 @@ vzmorie/
 | Логин | admin@vzmorie.ru |
 | Пароль | J50ZbqjOJc2CfHoUu3tF |
 | PostgreSQL | pg4.sweb.ru:5433/newlsu |
-| Telegram Bot Token | 8737282103:AAHatRmZTgFm9acVK_KGBTffiuP74MdPeAo |
-| Telegram Channel | 301930940 |
+| Telegram Bot | @vzmorie_bot |
+| Telegram ID | 301930940 (канал) |
 | GitHub | github.com/TikhonBaruch/vzmorie |
 
 ---
 
-## 7. Хронология разработки
+## 8. Хронология (последние коммиты)
 
 | # | Коммит | Описание |
 |---|---|---|
-| 1 | `460300e` | Initial clean commit — лендинг |
-| 2 | `bbbb320` — `c463190` | Фиксы сборки, деплой на Vercel |
-| 3 | `dbc787f` | Полная структура: tRPC, Prisma, Auth, Admin, MiniApp |
-| 4 | `839313a` | Рабочая админка с REST API (посты) |
-| 5 | `7c8a6c3` | Фикс Next.js 16 params (Promise) |
-| 6 | `5a2692a` | Авторизация — login page + middleware |
-| 7 | `e94200d` | Управление товарами (CRUD) |
-| 8 | `b4c43af` | Исправление критических проблем безопасности |
-| 9 | `303a34c` | Главная на реальных данных (контакты, тарифы, галерея из API, hero) |
-| 10 | `cc0a123` | Постинг с воды: Telegram catches + morning summary + conditions block |
-| 11 | `ad5415e` | Секции сайта: флот, отдых, подводная охота, даты с бронированием |
-| 12 | `875406a` | Исправление опечаток, грамматики, API conditions, telegram setup |
-
----
-
-## 8. Контент страниц (справка)
-
-### Навигация
-| Якорь | Раздел | Статус |
-|---|---|---|
-| `#fleet` | Флот и Егеря | ✅ FleetGuides |
-| `#rest` | Баня и Отдых | ✅ RestSection |
-| `#spearfishing` | Подводная охота | ✅ SpearfishingSection |
-| `#dates` | Даты заезда | ✅ DatesSection |
-
-### Контакты (реальные)
-- Email: vzmorie@rambler.ru
-- Телефон: +7 (909) 372-05-73
-- Координаты: 45.758469, 48.136073
-- WhatsApp: +7 909 372-05-73
-
-### Тарифы (реальные)
-- Стандарт: от 7 100 ₽/сутки/чел
-- I категория: от 7 400 ₽/сутки/чел
-- Люкс: от 9 100 ₽/сутки/чел
-- Включено: 3-разовое питание
+| 16 | `e1c4bbd` | Исправление всех найденных ошибок |
+| 15 | `470ea40` | Favicon (волна в фирменных цветах) |
+| 14 | `96b21d3` | Увеличение видимости карты |
+| 13 | `f3ba256` | Исправление позиций тайлов |
+| 12 | `3afd2e0` | Расширение сетки тайлов до 5x5 |
+| 11 | `29f1962` | Добавление OSM тайлов на фон карты |
+| 10 | `d93dbb7` | Сворачиваемые карточки на мобилке |
+| 9 | `76e1ad2` | Управление фото через админку |
+| 8 | `847abda` | Исправление z-index hero |
+| 7 | `875406a` | Опечатки, грамматика, API conditions |
+| 6 | `ad5415e` | Секции: флот, отдых, подводная охота, даты |
+| 5 | `cc0a123` | Постинг с воды: Telegram + сводки |
+| 4 | `303a34c` | Главная на реальных данных |
