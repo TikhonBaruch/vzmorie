@@ -63,7 +63,7 @@ export function LocationMap() {
     <section className="py-20">
       <motion.div
         {...fadeIn}
-        className="max-w-3xl text-center"
+        className="max-w-3xl text-left"
       >
         <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl">
           В самом эпицентре рыбных путей.
