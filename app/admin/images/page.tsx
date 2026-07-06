@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Trash2, Save, GripVertical, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
+import { FileUpload } from "@/components/FileUpload";
 
 interface SiteImage {
   id: string;
@@ -30,6 +31,7 @@ export default function SiteImagesPage() {
   const [newKey, setNewKey] = useState("");
   const [newUrl, setNewUrl] = useState("");
   const [newAlt, setNewAlt] = useState("");
+  const [inputMode, setInputMode] = useState<"upload" | "url">("upload");
 
   const fetchImages = useCallback(() => {
     fetch("/api/admin/site-images", { credentials: "include" })
@@ -98,7 +100,7 @@ export default function SiteImagesPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-100">Фото сайта</h1>
         <p className="mt-2 text-sm text-slate-400">
-          Управление изображениями для HeroBento и галереи. Вставьте прямую ссылку на изображение.
+          Управление изображениями для HeroBento и галереи.
         </p>
       </div>
 
@@ -166,34 +168,68 @@ export default function SiteImagesPage() {
       <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
         <h2 className="mb-4 text-lg font-semibold text-slate-100">Добавить фото</h2>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelClass}>Ключ (key)</label>
-            <select
-              value={newKey}
+        <div className="mb-4">
+          <label className={labelClass}>Ключ (key)</label>
+          <select
+            value={newKey}
+            onChange={(e) => setNewKey(e.target.value)}
+            className={inputClass}
+          >
+            <option value="">Выберите...</option>
+            {availablePresets.map((p) => (
+              <option key={p.key} value={p.key}>
+                {p.label}
+              </option>
+            ))}
+            <option value="custom">Свой ключ...</option>
+          </select>
+          {newKey === "custom" && (
+            <input
+              type="text"
+              value=""
               onChange={(e) => setNewKey(e.target.value)}
-              className={inputClass}
-            >
-              <option value="">Выберите...</option>
-              {availablePresets.map((p) => (
-                <option key={p.key} value={p.key}>
-                  {p.label}
-                </option>
-              ))}
-              <option value="custom">Свой ключ...</option>
-            </select>
-            {newKey === "custom" && (
-              <input
-                type="text"
-                value=""
-                onChange={(e) => setNewKey(e.target.value)}
-                className={`mt-2 ${inputClass}`}
-                placeholder="my_custom_key"
-              />
-            )}
-          </div>
+              className={`mt-2 ${inputClass}`}
+              placeholder="my_custom_key"
+            />
+          )}
+        </div>
 
-          <div>
+        {/* Input mode toggle */}
+        <div className="mb-4 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setInputMode("upload")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm transition ${
+              inputMode === "upload"
+                ? "bg-terracotta-600 text-white"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+            }`}
+          >
+            <ImageIcon className="h-4 w-4" />
+            Загрузить файл
+          </button>
+          <button
+            type="button"
+            onClick={() => setInputMode("url")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm transition ${
+              inputMode === "url"
+                ? "bg-terracotta-600 text-white"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+            }`}
+          >
+            <LinkIcon className="h-4 w-4" />
+            Вставить ссылку
+          </button>
+        </div>
+
+        {inputMode === "upload" ? (
+          <FileUpload
+            onUpload={(url) => setNewUrl(url)}
+            folder="site"
+            className="mb-4"
+          />
+        ) : (
+          <div className="mb-4">
             <label className={labelClass}>URL изображения *</label>
             <input
               type="url"
@@ -203,9 +239,9 @@ export default function SiteImagesPage() {
               placeholder="https://example.com/photo.jpg"
             />
           </div>
-        </div>
+        )}
 
-        <div className="mt-4">
+        <div className="mb-4">
           <label className={labelClass}>Описание (alt)</label>
           <input
             type="text"
@@ -217,7 +253,7 @@ export default function SiteImagesPage() {
         </div>
 
         {newUrl && (
-          <div className="mt-4">
+          <div className="mb-4">
             <label className={labelClass}>Предпросмотр</label>
             <img
               src={newUrl}
@@ -233,7 +269,7 @@ export default function SiteImagesPage() {
         <button
           onClick={handleAdd}
           disabled={!newKey || !newUrl || saving}
-          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-terracotta-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-terracotta-500 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl bg-terracotta-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-terracotta-500 disabled:opacity-50"
         >
           <Plus className="h-4 w-4" />
           {saving ? "Сохранение..." : "Добавить"}
