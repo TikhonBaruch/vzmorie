@@ -111,10 +111,10 @@ export function HeroBento() {
               Кулагинский банк / Астраханская область
             </div>
 
-            <h1 className="font-brutal text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
+            <h1 className="font-brutal text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl md:text-d-4xl">
               ЖИВИ НА ВОДЕ. ОТДЫХАЙ НА ЗЕМЛЕ.
             </h1>
-            <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-slate-200/90 sm:text-base">
+            <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-slate-200/90 sm:text-base md:text-d-base">
               Трофейная рыбалка и подводная охота в 5 минутах от базы.
               90 км от Астрахани.
             </p>
@@ -156,10 +156,10 @@ export function HeroBento() {
           <div className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-khaki-500">
+                <div className="text-xs font-semibold uppercase tracking-wide text-khaki-500 md:text-d-xs">
                   Для подвохов
                 </div>
-                <div className="mt-1 text-lg font-semibold text-slate-50">
+                <div className="mt-1 text-lg font-semibold text-slate-50 md:text-d-xl">
                   Сезон ПО открыт
                 </div>
               </div>
@@ -167,17 +167,17 @@ export function HeroBento() {
             </div>
 
             <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/30 px-4 py-3">
-              <div className="flex items-center gap-2 text-sm text-slate-100">
+              <div className="flex items-center gap-2 text-sm text-slate-100 md:text-d-sm">
                 <span className="relative inline-flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-pulseDot rounded-full bg-emerald-400/50" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
                 </span>
                 <span className="font-semibold">Видимость на раскатах</span>
               </div>
-              <div className="mt-1 text-xs text-slate-400">
+              <div className="mt-1 text-xs text-slate-400 md:text-d-xs">
                 Кристально чистая вода — фильтрация камышами.
               </div>
-              <div className="mt-2 text-xs text-slate-400">
+              <div className="mt-2 text-xs text-slate-400 md:text-d-xs">
                 Обновляем ежедневно в утренней сводке.
               </div>
             </div>
@@ -198,16 +198,16 @@ export function HeroBento() {
           <div className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-terracotta-500">
+                <div className="text-xs font-semibold uppercase tracking-wide text-terracotta-500 md:text-d-xs">
                   Для организатора
                 </div>
-                <div className="mt-1 text-lg font-semibold text-slate-50">
+                <div className="mt-1 text-lg font-semibold text-slate-50 md:text-d-xl">
                   Едете компанией?
                 </div>
               </div>
               <Shield className="h-5 w-5 text-slate-200/80" />
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 text-sm leading-relaxed text-slate-300 md:text-d-sm">
               Пакеты &laquo;всё включено&raquo; с баней, отдыхом и логистикой.
             </p>
             <Link
@@ -224,16 +224,16 @@ export function HeroBento() {
           <div className="flex h-full flex-col justify-between p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+                <div className="text-xs font-semibold uppercase tracking-wide text-slate-300 md:text-d-xs">
                   Для трофейщика
                 </div>
-                <div className="mt-1 text-sm font-semibold text-slate-50">
+                <div className="mt-1 text-sm font-semibold text-slate-50 md:text-d-sm">
                   Трофеи банка
                 </div>
               </div>
               <Fish className="h-5 w-5 text-khaki-500" />
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 text-sm leading-relaxed text-slate-300 md:text-d-sm">
               Ямы и перекаты рядом — работаем по точкам быстро.
             </p>
             <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/30 px-4 py-3 text-xs text-slate-400">
@@ -251,18 +251,18 @@ export function HeroBento() {
                     <span className="absolute inline-flex h-full w-full animate-pulseDot rounded-full bg-red-500/50" />
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                   </span>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-300 md:text-d-xs">
                     Live-статус
                   </div>
                 </div>
-                <div className="mt-1 text-lg font-semibold text-slate-50">
+                <div className="mt-1 text-lg font-semibold text-slate-50 md:text-d-xl">
                   Вести с воды
                 </div>
               </div>
               <Waves className="h-5 w-5 text-slate-200/80" />
             </div>
 
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 text-sm leading-relaxed text-slate-300 md:text-d-sm">
               {latest
                 ? `Сегодня: ${latest.title}${latest.fishType ? ` (${latest.fishType}${latest.weight ? `, ${latest.weight} кг` : ""})` : ""}`
                 : "Ожидаем сводку с воды..."}

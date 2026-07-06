@@ -47,10 +47,10 @@ export function FleetGuides() {
         {...fadeIn}
         className="max-w-3xl text-center"
       >
-        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl">
+        <h2 className="font-brutal text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl md:text-d-3xl">
           Флот и Егеря
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-base md:text-d-base">
           На чем вы пойдете за трофеем и кто будет вас вести.
         </p>
       </motion.div>

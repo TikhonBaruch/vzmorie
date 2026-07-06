@@ -61,6 +61,16 @@ const config: Config = {
       },
       animation: {
         pulseDot: "pulseDot 1.2s ease-in-out infinite"
+      },
+      fontSize: {
+        "d-xs": ["0.9rem", { lineHeight: "1.4" }],
+        "d-sm": ["1.05rem", { lineHeight: "1.5" }],
+        "d-base": ["1.2rem", { lineHeight: "1.6" }],
+        "d-lg": ["1.35rem", { lineHeight: "1.5" }],
+        "d-xl": ["1.5rem", { lineHeight: "1.4" }],
+        "d-2xl": ["1.8rem", { lineHeight: "1.3" }],
+        "d-3xl": ["2.25rem", { lineHeight: "1.2" }],
+        "d-4xl": ["2.7rem", { lineHeight: "1.1" }],
       }
     }
   },
