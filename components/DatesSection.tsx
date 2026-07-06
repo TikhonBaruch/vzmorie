@@ -72,7 +72,7 @@ export function DatesSection() {
       >
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="h-5 w-5 text-terracotta-500" />
-          <h3 className="text-lg font-semibold text-slate-100">Ближайшие выходы</h3>
+          <h3 className="text-lg font-semibold text-slate-100">Ближайшие даты</h3>
         </div>
 
         <div className="space-y-3">
