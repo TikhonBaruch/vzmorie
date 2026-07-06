@@ -83,15 +83,15 @@ export function LocationMap() {
         className="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/90 shadow-tactical shadow-black/40"
       >
         <div className="relative aspect-video w-full min-h-[320px] sm:min-h-[420px]">
-          {/* Background map tiles */}
+          {/* Background map tiles - Kulaginsky Bank area */}
           <div
-            className="absolute inset-0 opacity-20"
+            className="absolute inset-0 z-0"
             style={{
-              backgroundImage: `url("https://tile.openstreetmap.org/11/2237/1245.png"), url("https://tile.openstreetmap.org/11/2238/1245.png"), url("https://tile.openstreetmap.org/11/2237/1246.png"), url("https://tile.openstreetmap.org/11/2238/1246.png")`,
+              backgroundImage: `url("https://tile.openstreetmap.org/11/1296/729.png"), url("https://tile.openstreetmap.org/11/1297/729.png"), url("https://tile.openstreetmap.org/11/1298/729.png"), url("https://tile.openstreetmap.org/11/1296/730.png"), url("https://tile.openstreetmap.org/11/1297/730.png"), url("https://tile.openstreetmap.org/11/1298/730.png"), url("https://tile.openstreetmap.org/11/1296/731.png"), url("https://tile.openstreetmap.org/11/1297/731.png"), url("https://tile.openstreetmap.org/11/1298/731.png")`,
               backgroundSize: "256px 256px",
-              backgroundPosition: "left top, right top, left bottom, right bottom",
               backgroundRepeat: "no-repeat",
-              filter: "invert(1) hue-rotate(180deg) saturate(0.5) brightness(0.8)",
+              filter: "invert(1) hue-rotate(180deg) saturate(0.4) brightness(0.7)",
+              opacity: 0.35,
             }}
           />
 
