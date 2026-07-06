@@ -53,7 +53,7 @@ export function Gallery() {
         .then((r) => (r.ok ? r.json() : []))
         .catch(() => []),
     ]).then(([postsData, imagesData]) => {
-      setPosts(postsData);
+      setPosts(postsData.filter((p: Post) => p.type !== "WEATHER" && p.type !== "WATER_LEVEL"));
       setSiteImages(imagesData.filter((img: SiteImage) => img.key.startsWith("gallery_")));
     });
   }, []);
