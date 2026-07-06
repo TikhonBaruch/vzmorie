@@ -83,9 +83,21 @@ export function LocationMap() {
         className="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/90 shadow-tactical shadow-black/40"
       >
         <div className="relative aspect-video w-full min-h-[320px] sm:min-h-[420px]">
-          {/* Background layers */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.6),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),_transparent_60%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.9),rgba(15,23,42,0.8)),radial-gradient(circle_at_center,rgba(15,23,42,0.1),transparent_60%)] mix-blend-screen opacity-90" />
+          {/* Background map tiles */}
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `url("https://tile.openstreetmap.org/11/2237/1245.png"), url("https://tile.openstreetmap.org/11/2238/1245.png"), url("https://tile.openstreetmap.org/11/2237/1246.png"), url("https://tile.openstreetmap.org/11/2238/1246.png")`,
+              backgroundSize: "256px 256px",
+              backgroundPosition: "left top, right top, left bottom, right bottom",
+              backgroundRepeat: "no-repeat",
+              filter: "invert(1) hue-rotate(180deg) saturate(0.5) brightness(0.8)",
+            }}
+          />
+
+          {/* Dark overlay layers */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.5),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.8),_transparent_60%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.85),rgba(15,23,42,0.75)),radial-gradient(circle_at_center,rgba(15,23,42,0.1),transparent_60%)] mix-blend-screen opacity-90" />
 
           {/* Concentric rings */}
           <div className="pointer-events-none absolute inset-4 rounded-2xl border border-slate-800/40">
