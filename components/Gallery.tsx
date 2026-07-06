@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -28,7 +30,7 @@ interface SiteImage {
   alt: string | null;
 }
 
-const TYPE_LABELS: Record<string, string> = {
+export const TYPE_LABELS: Record<string, string> = {
   CATCH: "Улов",
   WEATHER: "Погода",
   WATER_LEVEL: "Уровень воды",
@@ -37,12 +39,11 @@ const TYPE_LABELS: Record<string, string> = {
   NEWS: "Новость",
 };
 
-const filters = ["Все", "CATCH", "NEWS", "EVENT"] as const;
+const MAX_ITEMS = 8;
 
 export function Gallery() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [siteImages, setSiteImages] = useState<SiteImage[]>([]);
-  const [active, setActive] = useState<string>("Все");
 
   useEffect(() => {
     Promise.all([
@@ -70,9 +71,8 @@ export function Gallery() {
   }));
 
   const allItems = [...gallerySiteImages, ...posts];
-  const filtered = active === "Все"
-    ? allItems
-    : allItems.filter((p) => p.type === active);
+  const displayedItems = allItems.slice(0, MAX_ITEMS);
+  const hasMore = allItems.length > MAX_ITEMS;
 
   return (
     <section className="py-20">
@@ -90,40 +90,15 @@ export function Gallery() {
 
       <motion.div
         {...fadeIn}
-        transition={{ ...fadeIn.transition, delay: 0.05 } as const}
-        className="mt-8 flex flex-wrap justify-center gap-2"
-      >
-        {filters.map((filter) => {
-          const isActive = filter === active;
-          return (
-            <button
-              key={filter}
-              onClick={() => setActive(filter)}
-              type="button"
-              className={[
-                "rounded-full px-4 py-1.5 text-xs font-medium transition-colors",
-                isActive
-                  ? "bg-terracotta-600 text-white shadow-tactical shadow-black/40"
-                  : "bg-slate-800 text-slate-200 hover:bg-slate-700"
-              ].join(" ")}
-            >
-              {filter === "Все" ? "Все" : TYPE_LABELS[filter] || filter}
-            </button>
-          );
-        })}
-      </motion.div>
-
-      <motion.div
-        {...fadeIn}
         transition={{ ...fadeIn.transition, delay: 0.1 } as const}
         className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4"
       >
-        {filtered.length === 0 ? (
+        {displayedItems.length === 0 ? (
           <div className="col-span-full py-12 text-center text-slate-500">
             Пока нет публикаций. Загрузите фото через Telegram-бота!
           </div>
         ) : (
-          filtered.map((post) => (
+          displayedItems.map((post) => (
             <div
               key={post.id}
               className="group relative aspect-square overflow-hidden rounded-xl bg-slate-800"
@@ -162,6 +137,22 @@ export function Gallery() {
           ))
         )}
       </motion.div>
+
+      {hasMore && (
+        <motion.div
+          {...fadeIn}
+          transition={{ ...fadeIn.transition, delay: 0.15 } as const}
+          className="mt-8 text-center"
+        >
+          <Link
+            href="/posts"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/50 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Все публикации
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </motion.div>
+      )}
     </section>
   );
 }

@@ -1,136 +1,149 @@
 "use client";
 
-import { trpc } from "@/lib/trpc";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, MapPin, Fish, Waves } from "lucide-react";
-
-const typeLabels: Record<string, string> = {
+import { ArrowLeft, Calendar, MapPin, Fish } from "lucide-react";
+const TYPE_LABELS: Record<string, string> = {
   CATCH: "Улов",
   WEATHER: "Погода",
   WATER_LEVEL: "Уровень воды",
-  EVENT: "Событие",
+  EVENT: "Мероприятие",
   PROMO: "Акция",
   NEWS: "Новость",
 };
 
-const typeColors: Record<string, string> = {
-  CATCH: "bg-blue-900/50 text-blue-300",
-  WEATHER: "bg-yellow-900/50 text-yellow-300",
-  WATER_LEVEL: "bg-cyan-900/50 text-cyan-300",
-  EVENT: "bg-purple-900/50 text-purple-300",
-  PROMO: "bg-pink-900/50 text-pink-300",
-  NEWS: "bg-slate-800 text-slate-300",
-};
+interface Post {
+  id: string;
+  title: string;
+  coverImage: string | null;
+  type: string;
+  fishType: string | null;
+  weight: number | null;
+  location: string | null;
+  publishedAt: string | null;
+}
+
+const filters = ["Все", "CATCH", "NEWS", "EVENT", "PROMO"] as const;
 
 export default function PostsPage() {
-  const { data, isLoading } = trpc.post.list.useQuery({
-    status: "PUBLISHED",
-    limit: 12,
-  });
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState<string>("Все");
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
-        <div className="text-slate-400">Загрузка...</div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    fetch("/api/public/posts?limit=100")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => {
+        setPosts(data.filter((p: Post) => p.type !== "WEATHER" && p.type !== "WATER_LEVEL"));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  const posts = data?.posts || [];
+  const filtered = active === "Все"
+    ? posts
+    : posts.filter((p) => p.type === active);
 
   return (
     <div className="min-h-screen bg-slate-950">
       <div className="container-tactical py-24">
-        <h1 className="mb-8 text-3xl font-bold text-slate-100">
-          Вести с воды
-        </h1>
+        {/* Header */}
+        <div className="mb-8 flex items-center gap-4">
+          <Link
+            href="/"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-slate-100"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-slate-100">Вести с воды</h1>
+            <p className="mt-1 text-sm text-slate-400">
+              Все публикации с воды — уловы, новости, события
+            </p>
+          </div>
+        </div>
 
-        {posts.length === 0 ? (
+        {/* Filters */}
+        <div className="mb-8 flex flex-wrap gap-2">
+          {filters.map((filter) => {
+            const isActive = filter === active;
+            return (
+              <button
+                key={filter}
+                onClick={() => setActive(filter)}
+                type="button"
+                className={[
+                  "rounded-full px-4 py-1.5 text-xs font-medium transition-colors",
+                  isActive
+                    ? "bg-terracotta-600 text-white"
+                    : "bg-slate-800 text-slate-200 hover:bg-slate-700"
+                ].join(" ")}
+              >
+                {filter === "Все" ? "Все" : TYPE_LABELS[filter] || filter}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Grid */}
+        {loading ? (
+          <div className="py-12 text-center text-slate-400">Загрузка...</div>
+        ) : filtered.length === 0 ? (
           <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-12 text-center">
-            <Waves className="mx-auto h-12 w-12 text-slate-600" />
-            <p className="mt-4 text-slate-400">Пока нет публикаций</p>
+            <p className="text-slate-400">Нет публикаций</p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <Link
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {filtered.map((post) => (
+              <div
                 key={post.id}
-                href={`/posts/${post.slug}`}
-                className="group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 transition hover:border-slate-700 hover:bg-slate-900"
+                className="group relative aspect-square overflow-hidden rounded-xl bg-slate-800"
               >
-                {/* Cover image */}
-                {post.coverImage && (
-                  <div className="relative aspect-video">
-                    <Image
-                      src={post.coverImage}
-                      alt={post.title}
-                      fill
-                      className="object-cover transition group-hover:scale-105"
-                    />
-                  </div>
+                {post.coverImage ? (
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition group-hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900" />
                 )}
 
-                <div className="p-5">
-                  {/* Type badge */}
-                  <span
-                    className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${typeColors[post.type]}`}
-                  >
-                    {typeLabels[post.type]}
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
 
-                  {/* Title */}
-                  <h2 className="mt-3 text-lg font-semibold text-slate-100 group-hover:text-white">
+                <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 transition group-hover:opacity-100">
+                  <div className="text-xs font-medium text-slate-100">
                     {post.title}
-                  </h2>
-
-                  {/* Excerpt */}
-                  {post.excerpt && (
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-400">
-                      {post.excerpt}
-                    </p>
-                  )}
-
-                  {/* Meta */}
-                  <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-500">
-                    {post.location && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {post.location}
-                      </span>
-                    )}
-                    {post.fishType && (
-                      <span className="flex items-center gap-1">
-                        <Fish className="h-3 w-3" />
-                        {post.fishType}
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {post.publishedAt
-                        ? new Date(post.publishedAt).toLocaleDateString("ru-RU")
-                        : ""}
-                    </span>
                   </div>
-
-                  {/* Tags */}
-                  {post.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag.id}
-                          className="rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-400"
-                        >
-                          {tag.name}
-                        </span>
-                      ))}
+                  {post.fishType && (
+                    <div className="mt-1 text-xs text-slate-300">
+                      {post.fishType}{post.weight ? ` — ${post.weight} кг` : ""}
+                    </div>
+                  )}
+                  {post.publishedAt && (
+                    <div className="mt-1 text-[10px] text-slate-400">
+                      {new Date(post.publishedAt).toLocaleDateString("ru-RU")}
                     </div>
                   )}
                 </div>
-              </Link>
+
+                <div className="absolute left-2 top-2">
+                  <span className="inline-block rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-slate-200 backdrop-blur-sm">
+                    {TYPE_LABELS[post.type] || post.type}
+                  </span>
+                </div>
+              </div>
             ))}
           </div>
         )}
+
+        {/* Count */}
+        <div className="mt-6 text-center text-xs text-slate-500">
+          {filtered.length} {filtered.length === 1 ? "публикация" : filtered.length < 5 ? "публикации" : "публикаций"}
+        </div>
       </div>
     </div>
   );
