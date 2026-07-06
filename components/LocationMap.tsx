@@ -83,11 +83,13 @@ export function LocationMap() {
         className="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/90 shadow-tactical shadow-black/40"
       >
         <div className="relative aspect-video w-full min-h-[320px] sm:min-h-[420px]">
-          {/* Background map tiles - Kulaginsky Bank area */}
+          {/* Background map tiles - Kulaginsky Bank area (5x5 grid) */}
           <div
             className="absolute inset-0 z-0"
             style={{
-              backgroundImage: `url("https://tile.openstreetmap.org/11/1296/729.png"), url("https://tile.openstreetmap.org/11/1297/729.png"), url("https://tile.openstreetmap.org/11/1298/729.png"), url("https://tile.openstreetmap.org/11/1296/730.png"), url("https://tile.openstreetmap.org/11/1297/730.png"), url("https://tile.openstreetmap.org/11/1298/730.png"), url("https://tile.openstreetmap.org/11/1296/731.png"), url("https://tile.openstreetmap.org/11/1297/731.png"), url("https://tile.openstreetmap.org/11/1298/731.png")`,
+              backgroundImage: [
+                [1295,1296,1297,1298,1299].map(x => [728,729,730,731,732].map(y => `url("https://tile.openstreetmap.org/11/${x}/${y}.png")`)).flat()
+              ].flat().join(", "),
               backgroundSize: "256px 256px",
               backgroundRepeat: "no-repeat",
               filter: "invert(1) hue-rotate(180deg) saturate(0.4) brightness(0.7)",
