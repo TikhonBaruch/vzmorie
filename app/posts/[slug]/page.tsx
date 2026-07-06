@@ -9,7 +9,7 @@ import {
   Calendar,
   MapPin,
   Fish,
-  Weight,
+  Scale,
   MessageSquare,
 } from "lucide-react";
 
@@ -134,7 +134,7 @@ export default function PostPage({
               )}
               {post.weight && (
                 <span className="flex items-center gap-1 text-sm text-slate-300">
-                  <Weight className="h-4 w-4 text-khaki-500" />
+                   <Scale className="h-4 w-4 text-khaki-500" />
                   {post.weight} кг
                 </span>
               )}

@@ -14,11 +14,15 @@ export const authOptions: NextAuthOptions = {
         const adminEmail = process.env.ADMIN_EMAIL;
         const adminPassword = process.env.ADMIN_PASSWORD;
 
+        if (!adminEmail || !adminPassword) {
+          return null;
+        }
+
         if (
           credentials?.email === adminEmail &&
           credentials?.password === adminPassword
         ) {
-          let user = await prisma.user.findUnique({ where: { email: adminEmail! } });
+          let user = await prisma.user.findUnique({ where: { email: adminEmail } });
           if (!user) {
             user = await prisma.user.create({
               data: {

@@ -67,7 +67,7 @@ export function HeroBento() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/posts?status=PUBLISHED")
+      fetch("/api/public/posts")
         .then((r) => (r.ok ? r.json() : []))
         .catch(() => []),
       fetch("/api/site-images")

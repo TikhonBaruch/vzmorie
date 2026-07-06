@@ -71,7 +71,9 @@ export async function POST(req: Request) {
   // Handle callback queries (approve/reject buttons)
   if (body.callback_query) {
     const { data, message } = body.callback_query;
-    const [action, postTitle] = data.split(":");
+    const colonIndex = data.indexOf(":");
+    const action = colonIndex === -1 ? data : data.slice(0, colonIndex);
+    const postTitle = colonIndex === -1 ? "" : data.slice(colonIndex + 1);
 
     if (action === "approve") {
       const post = await prisma.post.findFirst({ where: { title: postTitle } });

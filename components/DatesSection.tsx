@@ -123,7 +123,7 @@ export function DatesSection() {
           </div>
         </a>
         <a
-          href="https://t.me/"
+          href="https://t.me/vzmorie_bot"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-4 transition hover:border-slate-700"
