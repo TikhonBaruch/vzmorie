@@ -91,14 +91,14 @@ export function LocationMap() {
               backgroundPosition: [1295,1296,1297,1298,1299].flatMap(x => [728,729,730,731,732].map(y => `${(x - 1295) * 256}px ${(y - 728) * 256}px`)).join(", "),
               backgroundSize: "256px 256px",
               backgroundRepeat: "no-repeat",
-              filter: "invert(1) hue-rotate(180deg) saturate(0.4) brightness(0.7)",
-              opacity: 0.35,
+              filter: "invert(1) hue-rotate(180deg) saturate(0.6) brightness(0.9)",
+              opacity: 0.55,
             }}
           />
 
           {/* Dark overlay layers */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.5),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.8),_transparent_60%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.85),rgba(15,23,42,0.75)),radial-gradient(circle_at_center,rgba(15,23,42,0.1),transparent_60%)] mix-blend-screen opacity-90" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.3),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.5),_transparent_60%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.7),rgba(15,23,42,0.6)),radial-gradient(circle_at_center,rgba(15,23,42,0.05),transparent_60%)] mix-blend-screen opacity-80" />
 
           {/* Concentric rings */}
           <div className="pointer-events-none absolute inset-4 rounded-2xl border border-slate-800/40">
