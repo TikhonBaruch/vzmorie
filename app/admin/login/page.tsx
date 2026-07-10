@@ -28,8 +28,19 @@ export default function LoginPage() {
     if (result?.error) {
       setError("Неверный email или пароль");
     } else {
-      router.push("/admin");
-      router.refresh();
+      // Get session to check role for redirect
+      try {
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+        const role = session?.user?.role;
+        if (role === "SPECIALIST") {
+          window.location.href = "/admin/chat";
+        } else {
+          window.location.href = "/admin";
+        }
+      } catch {
+        window.location.href = "/admin";
+      }
     }
   };
 

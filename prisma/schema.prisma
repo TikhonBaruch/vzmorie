@@ -16,6 +16,7 @@ model User {
   telegramId    String?   @unique
   telegramName  String?
   role          UserRole  @default(USER)
+  password      String?
   posts         Post[]
   comments      Comment[]
   accounts      Account[]
@@ -143,8 +144,10 @@ model Subscriber {
 
 enum UserRole {
   USER
-  MODERATOR
+  EDITOR
   ADMIN
+  SUPER_ADMIN
+  SPECIALIST
 }
 
 enum PostType {
