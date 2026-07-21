@@ -230,3 +230,68 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+model Review {
+  id          String   @id @default(cuid())
+  author      String
+  car         String?
+  text        String
+  rating      Int      @default(5)
+  date        String?
+  source      String?  @default("manual")
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([sortOrder])
+  @@map("reviews")
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  name       String
+  phone      String
+  service    String?
+  message    String?
+  status     BookingStatus @default(NEW)
+  notifyRole String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  NEW
+  PROCESSING
+  DONE
+  CANCELLED
+}
+
+model TelegramRecipient {
+  id        String   @id @default(cuid())
+  name      String
+  chatId    String   @unique
+  role      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("telegram_recipients")
+}
+
+model SiteSeo {
+  id              String   @id @default(cuid())
+  pageKey         String   @unique
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("site_seo")
+}

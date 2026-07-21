@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [totalPosts, pendingPosts, publishedPosts, totalUsers, totalComments, totalSubscribers] =
+  const [totalPosts, pendingPosts, publishedPosts, totalUsers, totalComments, totalSubscribers, totalReviews, totalBookings, pendingBookings] =
     await Promise.all([
       prisma.post.count(),
       prisma.post.count({ where: { status: "PENDING" } }),
@@ -19,6 +19,9 @@ export async function GET() {
       prisma.user.count(),
       prisma.comment.count(),
       prisma.subscriber.count({ where: { active: true } }),
+      prisma.review.count(),
+      prisma.booking.count(),
+      prisma.booking.count({ where: { status: "NEW" } }),
     ]);
 
   return NextResponse.json({
@@ -28,5 +31,8 @@ export async function GET() {
     totalUsers,
     totalComments,
     totalSubscribers,
+    totalReviews,
+    totalBookings,
+    pendingBookings,
   });
 }

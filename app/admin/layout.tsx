@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { LayoutDashboard, FileText, Package, Image, Cloud, DollarSign, Calendar, Type, Users, MessageSquare, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, Package, Image, Cloud, DollarSign, Calendar, Type, Users, MessageSquare, LogOut, Menu, X, Star, Bot, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const allSidebar = [
@@ -11,12 +11,16 @@ const allSidebar = [
   { label: "Чат", href: "/admin/chat", icon: MessageSquare },
   { label: "Hero блок", href: "/admin/hero", icon: Type, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Публикации", href: "/admin/posts", icon: FileText, roles: ["ADMIN", "SUPER_ADMIN"] },
+  { label: "Отзывы", href: "/admin/reviews", icon: Star, roles: ["ADMIN", "EDITOR", "SUPER_ADMIN"] },
+  { label: "Заявки", href: "/admin/bookings", icon: Calendar, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Условия", href: "/admin/conditions", icon: Cloud, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Тарифы", href: "/admin/tariffs", icon: DollarSign, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Даты заезда", href: "/admin/dates", icon: Calendar, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Товары", href: "/admin/products", icon: Package, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Фото сайта", href: "/admin/images", icon: Image, roles: ["ADMIN", "SUPER_ADMIN"] },
+  { label: "Telegram", href: "/admin/telegram", icon: Bot, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Пользователи", href: "/admin/users", icon: Users, roles: ["SUPER_ADMIN"] },
+  { label: "Аудит", href: "/admin/audit", icon: Shield, roles: ["ADMIN", "SUPER_ADMIN"] },
 ];
 
 // Pages that SPECIALIST is allowed to access
