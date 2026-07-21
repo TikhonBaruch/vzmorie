@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Search, Eye, Edit, Trash2, Check, X, Save, ArrowLeft } from "lucide-react";
+import { Plus, Search, Eye, Edit, Trash2, Check, X, Save, ArrowLeft, Download, ExternalLink, ImageIcon } from "lucide-react";
+import NextImage from "next/image";
 
 interface Tag {
   id: string;
@@ -253,6 +254,7 @@ function PostForm({
   const [fishType, setFishType] = useState(post?.fishType || "");
   const [weight, setWeight] = useState(post?.weight?.toString() || "");
   const [saving, setSaving] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -375,6 +377,41 @@ function PostForm({
               className={inputClass}
               placeholder="https://..."
             />
+            {coverImage && (
+              <div className="mt-2">
+                <div className="relative group">
+                  <div className="relative h-48 w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+                    <NextImage
+                      src={coverImage}
+                      alt="Обложка"
+                      fill
+                      className="object-cover cursor-pointer"
+                      sizes="100vw"
+                      onClick={() => setSelectedImage(coverImage)}
+                    />
+                  </div>
+                </div>
+                <div className="mt-2 flex gap-3">
+                  <a
+                    href={coverImage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Открыть
+                  </a>
+                  <a
+                    href={coverImage}
+                    download
+                    className="inline-flex items-center gap-1 text-xs text-green-400 hover:text-green-300"
+                  >
+                    <Download className="h-3 w-3" />
+                    Скачать
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
           <div>
             <label className={labelClass}>Теги (через запятую)</label>
@@ -440,6 +477,56 @@ function PostForm({
           </button>
         </div>
       </form>
+
+      {/* Image Lightbox */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 p-2 text-white/70 hover:text-white z-10"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          <div
+            className="max-w-5xl w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <NextImage
+                src={selectedImage}
+                alt="Просмотр изображения"
+                fill
+                className="object-contain"
+                sizes="100vw"
+              />
+            </div>
+
+            <div className="mt-4 flex justify-center gap-4">
+              <a
+                href={selectedImage}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Открыть в полном размере
+              </a>
+              <a
+                href={selectedImage}
+                download
+                className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500"
+              >
+                <Download className="h-4 w-4" />
+                Скачать
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
