@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { LayoutDashboard, FileText, Package, Image, Cloud, DollarSign, Calendar, Type, Users, MessageSquare, LogOut, Menu, X, Star, Bot, Shield, Settings } from "lucide-react";
+import { LayoutDashboard, FileText, Package, Image, Cloud, DollarSign, Calendar, Type, Users, MessageSquare, LogOut, Menu, X, Star, Bot, Shield, Settings, ImageIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const allSidebar = [
@@ -18,6 +18,7 @@ const allSidebar = [
   { label: "Даты заезда", href: "/admin/dates", icon: Calendar, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Номера", href: "/admin/products", icon: Package, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Фото сайта", href: "/admin/images", icon: Image, roles: ["ADMIN", "SUPER_ADMIN"] },
+  { label: "Галерея", href: "/admin/gallery", icon: ImageIcon, roles: ["ADMIN", "EDITOR", "SUPER_ADMIN"] },
   { label: "Настройки главной", href: "/admin/settings", icon: Settings, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Telegram", href: "/admin/telegram", icon: Bot, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Пользователи", href: "/admin/users", icon: Users, roles: ["SUPER_ADMIN"] },
