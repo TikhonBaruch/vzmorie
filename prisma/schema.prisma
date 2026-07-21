@@ -213,3 +213,20 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  userId    String?
+  userName  String?
+  userRole  String?
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
