@@ -114,6 +114,8 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [batchUploading, setBatchUploading] = useState(false);
+  const batchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { fetchImages(); }, []);
 
@@ -186,6 +188,48 @@ export default function GalleryPage() {
     setItems(newItems);
   };
 
+  const handleBatchUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setBatchUploading(true);
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "gallery");
+
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const newKey = `gallery_${Date.now()}_${i}`;
+          await fetch("/api/admin/site-images", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              key: newKey,
+              url: data.url,
+              title: file.name.replace(/\.[^.]+$/, ""),
+              desc: "",
+              sort: items.length + i,
+            }),
+          });
+        }
+      } catch {}
+    }
+
+    await fetchImages();
+    setBatchUploading(false);
+    if (batchInputRef.current) batchInputRef.current.value = "";
+  };
+
   const moveItem = (index: number, direction: "up" | "down") => {
     const newIndex = direction === "up" ? index - 1 : index + 1;
     if (newIndex < 0 || newIndex >= items.length) return;
@@ -209,6 +253,22 @@ export default function GalleryPage() {
           <button onClick={addItem} className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
             <Plus className="h-4 w-4" /> Добавить фото
           </button>
+          <button
+            onClick={() => batchInputRef.current?.click()}
+            disabled={batchUploading}
+            className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
+          >
+            {batchUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {batchUploading ? "Загрузка..." : "Загрузить несколько"}
+          </button>
+          <input
+            ref={batchInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleBatchUpload}
+            className="hidden"
+          />
           <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Сохранение..." : "Сохранить"}
