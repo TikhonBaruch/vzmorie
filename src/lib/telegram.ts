@@ -137,15 +137,48 @@ export async function sendMorningTemplate(chatId: string | number) {
   return sendTelegramMessage({ chatId, text });
 }
 
-export async function setWebhook() {
+export async function setWebhook(url?: string) {
+  const webhookUrl = url || `${process.env.NEXT_PUBLIC_SITE_URL}/api/telegram/webhook`;
+  const secret = process.env.TELEGRAM_BOT_SECRET;
+
   const response = await fetch(`${TELEGRAM_API}/setWebhook`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/telegram/webhook`,
+      url: webhookUrl,
+      secret_token: secret,
       allowed_updates: ["message", "callback_query"],
     }),
   });
 
   return response.json();
+}
+
+export async function getWebhookInfo() {
+  const response = await fetch(`${TELEGRAM_API}/getWebhookInfo`);
+  return response.json();
+}
+
+export async function answerCallbackQuery(callbackQueryId: string, text?: string) {
+  const response = await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      callback_query_id: callbackQueryId,
+      text,
+      show_alert: false,
+    }),
+  });
+
+  return response.json();
+}
+
+export async function notifyPublished(title: string, url: string) {
+  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+  if (!chatId) return null;
+
+  return sendTelegramMessage({
+    chatId,
+    text: `<b>Публикация опубликована</b>\n\n<b>${title}</b>\n<a href="${url}">Открыть на сайте</a>`,
+  });
 }
