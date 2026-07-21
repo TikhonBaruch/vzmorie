@@ -16,7 +16,7 @@ const allSidebar = [
   { label: "Условия", href: "/admin/conditions", icon: Cloud, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Тарифы", href: "/admin/tariffs", icon: DollarSign, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Даты заезда", href: "/admin/dates", icon: Calendar, roles: ["ADMIN", "SUPER_ADMIN"] },
-  { label: "Товары", href: "/admin/products", icon: Package, roles: ["ADMIN", "SUPER_ADMIN"] },
+  { label: "Номера", href: "/admin/products", icon: Package, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Фото сайта", href: "/admin/images", icon: Image, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Telegram", href: "/admin/telegram", icon: Bot, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Пользователи", href: "/admin/users", icon: Users, roles: ["SUPER_ADMIN"] },

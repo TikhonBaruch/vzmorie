@@ -52,7 +52,7 @@ export default function ProductsPage() {
   }, [fetchProducts]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Удалить товар?")) return;
+    if (!confirm("Удалить номер?")) return;
     await fetch(`/api/admin/products/${id}`, { method: "DELETE", credentials: "include" });
     setProducts((p) => p.filter((item) => item.id !== id));
   };
@@ -89,13 +89,13 @@ export default function ProductsPage() {
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-100">Товары</h1>
+        <h1 className="text-2xl font-bold text-slate-100">Номера</h1>
         <button
           onClick={() => setCreating(true)}
           className="inline-flex items-center gap-2 rounded-xl bg-terracotta-600 px-4 py-2 text-sm font-semibold text-white hover:bg-terracotta-500"
         >
           <Plus className="h-4 w-4" />
-          Новый товар
+          Новый номер
         </button>
       </div>
 
@@ -139,7 +139,7 @@ export default function ProductsPage() {
             {products.length === 0 ? (
               <tr>
                 <td colSpan={5} className="p-8 text-center text-slate-400">
-                  Нет товаров
+                  Нет номеров
                 </td>
               </tr>
             ) : (
@@ -299,7 +299,7 @@ function ProductForm({
           <ArrowLeft className="h-5 w-5" />
         </button>
         <h1 className="text-2xl font-bold text-slate-100">
-          {product ? "Редактирование товара" : "Новый товар"}
+          {product ? "Редактирование номера" : "Новый номер"}
         </h1>
       </div>
 
@@ -312,7 +312,7 @@ function ProductForm({
             onChange={(e) => setName(e.target.value)}
             required
             className={inputClass}
-            placeholder="Название товара"
+            placeholder="Название номера"
           />
         </div>
 
@@ -359,7 +359,7 @@ function ProductForm({
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
             className={inputClass}
-            placeholder="Описание товара"
+            placeholder="Описание номера"
           />
         </div>
 
