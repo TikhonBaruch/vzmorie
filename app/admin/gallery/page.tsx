@@ -116,6 +116,7 @@ export default function GalleryPage() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [batchUploading, setBatchUploading] = useState(false);
   const batchInputRef = useRef<HTMLInputElement>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   useEffect(() => { fetchImages(); }, []);
 
@@ -240,6 +241,25 @@ export default function GalleryPage() {
     else if (editingIndex === newIndex) setEditingIndex(index);
   };
 
+  const handleDragStart = (index: number) => {
+    setDragIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === index) return;
+    const newItems = [...items];
+    const draggedItem = newItems[dragIndex];
+    newItems.splice(dragIndex, 1);
+    newItems.splice(index, 0, draggedItem);
+    setItems(newItems);
+    setDragIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
+  };
+
   if (loading) return <div className="flex items-center justify-center py-20"><div className="text-slate-400">Загрузка...</div></div>;
 
   return (
@@ -285,10 +305,19 @@ export default function GalleryPage() {
       ) : (
         <div className="space-y-4">
           {items.map((item, idx) => (
-            <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+            <div
+              key={item.id}
+              draggable
+              onDragStart={() => handleDragStart(idx)}
+              onDragOver={(e) => handleDragOver(e, idx)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-2xl border bg-slate-900/50 overflow-hidden transition ${
+                dragIndex === idx ? "border-blue-500 opacity-50" : "border-slate-800"
+              }`}
+            >
               {/* Header */}
               <div className="flex items-center gap-3 p-4 cursor-pointer hover:bg-slate-800/30 transition" onClick={() => setEditingIndex(editingIndex === idx ? null : idx)}>
-                <GripVertical className="h-5 w-5 text-slate-600 shrink-0" />
+                <GripVertical className="h-5 w-5 text-slate-600 shrink-0 cursor-grab" />
                 <div className="flex-1 min-w-0">
                   <span className="font-medium text-slate-100">{item.title || `Фото ${idx + 1}`}</span>
                   <p className="text-xs text-slate-500 mt-0.5 truncate">{item.desc || "Без описания"}</p>
