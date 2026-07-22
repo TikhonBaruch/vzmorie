@@ -6,6 +6,7 @@ import { Droplet, Snowflake, Thermometer, Waves } from "lucide-react";
 
 const nav = [
   { label: "Вести с воды", href: "/posts" },
+  { label: "Команда", href: "/specialists" },
   { label: "Флот и Егеря", href: "#fleet" },
   { label: "Баня и Отдых", href: "#rest" },
   { label: "Подвохам", href: "#spearfishing" },
