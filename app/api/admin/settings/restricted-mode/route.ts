@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logUpdate } from "@/lib/audit";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -25,6 +26,15 @@ export async function PUT(req: Request) {
     update: { value: enabled },
     create: { key: "restricted_mode", value: enabled },
   });
+
+  logUpdate(
+    "siteSetting",
+    "restricted_mode",
+    (session.user as any)?.id || "",
+    session.user?.name || "User",
+    role,
+    `Restricted mode ${enabled ? "ENABLED" : "DISABLED"}`
+  );
 
   return NextResponse.json({ enabled });
 }
