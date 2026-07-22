@@ -120,6 +120,13 @@ export default function AdminLayout({
           )}
         </header>
 
+        {/* Critical error notification for restricted mode */}
+        {isRestricted && (
+          <div className="bg-red-900/50 border-b border-red-800 px-4 py-3 text-center">
+            <p className="text-sm font-medium text-red-200">Критическая ошибка. Обратитесь к разработчику.</p>
+          </div>
+        )}
+
         {/* Main content — full width, no sidebar offset */}
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
