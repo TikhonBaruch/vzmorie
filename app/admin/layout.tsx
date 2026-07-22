@@ -48,7 +48,7 @@ export default function AdminLayout({
     : allSidebar.filter((item) => !item.roles || item.roles.includes(userRole));
 
   useEffect(() => {
-    fetch("/api/admin/settings/restricted-mode")
+    fetch("/api/admin/settings/restricted-mode?t=" + Date.now())
       .then((r) => r.json())
       .then((d) => setRestrictedMode(d.enabled))
       .catch(() => {});
