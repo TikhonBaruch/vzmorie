@@ -66,13 +66,16 @@ model VerificationToken {
 }
 
 model Post {
-  id          String     @id @default(cuid())
-  title       String
-  slug        String     @unique
-  content     String?    @db.Text
-  excerpt     String?
-  coverImage  String?
-  type        PostType   @default(CATCH)
+  id              String     @id @default(cuid())
+  title           String
+  slug            String     @unique
+  content         String?    @db.Text
+  excerpt         String?
+  coverImage      String?
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  type            PostType   @default(CATCH)
   status      PostStatus @default(DRAFT)
   authorId    String
   author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)

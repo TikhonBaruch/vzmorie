@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Search, Eye, Edit, Trash2, Check, X, Save, ArrowLeft, Download, ExternalLink, ImageIcon } from "lucide-react";
 import NextImage from "next/image";
+import { SeoPanel } from "@/components/admin/SeoPanel";
 
 interface Tag {
   id: string;
@@ -17,6 +18,9 @@ interface Post {
   content: string | null;
   excerpt: string | null;
   coverImage: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImage: string | null;
   status: string;
   type: string;
   location: string | null;
@@ -253,6 +257,9 @@ function PostForm({
   const [location, setLocation] = useState(post?.location || "");
   const [fishType, setFishType] = useState(post?.fishType || "");
   const [weight, setWeight] = useState(post?.weight?.toString() || "");
+  const [metaTitle, setMetaTitle] = useState(post?.metaTitle || "");
+  const [metaDescription, setMetaDescription] = useState(post?.metaDescription || "");
+  const [ogImage, setOgImage] = useState(post?.ogImage || "");
   const [saving, setSaving] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -274,6 +281,9 @@ function PostForm({
       location,
       fishType,
       weight: weight || undefined,
+      metaTitle,
+      metaDescription,
+      ogImage,
     };
 
     if (post) {
@@ -458,6 +468,18 @@ function PostForm({
             />
           </div>
         </div>
+
+        <SeoPanel
+          metaTitle={metaTitle}
+          metaDescription={metaDescription}
+          ogImage={ogImage}
+          pageUrl={post ? `/posts/${post.slug}` : "/posts/new"}
+          onChange={(field, value) => {
+            if (field === "metaTitle") setMetaTitle(value);
+            if (field === "metaDescription") setMetaDescription(value);
+            if (field === "ogImage") setOgImage(value);
+          }}
+        />
 
         <div className="flex gap-4 pt-4">
           <button
