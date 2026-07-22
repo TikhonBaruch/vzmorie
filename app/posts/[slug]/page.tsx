@@ -336,8 +336,8 @@ export default async function PostPage({
           </div>
         )}
 
-        {/* Comments */}
-        <CommentsSection postSlug={post.slug} />
+        {/* Comments temporarily disabled */}
+        {/* <CommentsSection postSlug={post.slug} /> */}
       </main>
       <Footer />
     </div>
