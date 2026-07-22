@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Search, Eye, Edit, Trash2, Check, X, Save, ArrowLeft, Download, ExternalLink, ImageIcon } from "lucide-react";
+import { SocialPostButton } from "@/components/SocialPostButton";
 import NextImage from "next/image";
 import { SeoPanel } from "@/components/admin/SeoPanel";
 
@@ -226,6 +227,14 @@ export default function PostsPage() {
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
+                      {post.status === "PUBLISHED" && (
+                        <SocialPostButton
+                          postId={post.id}
+                          postTitle={post.title}
+                          postUrl={`${window.location.origin}/posts/${post.slug}`}
+                          postExcerpt={post.excerpt || post.content?.slice(0, 200)}
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -262,12 +271,13 @@ function PostForm({
   const [ogImage, setOgImage] = useState(post?.ogImage || "");
   const [saving, setSaving] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [socialPlatforms, setSocialPlatforms] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
-    const body = {
+    const body: any = {
       title,
       content,
       excerpt,
@@ -285,6 +295,11 @@ function PostForm({
       metaDescription,
       ogImage,
     };
+
+    // Only send socialPlatforms when publishing
+    if (status === "PUBLISHED" && socialPlatforms.length > 0) {
+      body.socialPlatforms = socialPlatforms;
+    }
 
     if (post) {
       await fetch(`/api/admin/posts/${post.id}`, {
@@ -480,6 +495,35 @@ function PostForm({
             if (field === "ogImage") setOgImage(value);
           }}
         />
+
+        {/* Auto-posting to social platforms */}
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+          <h4 className="mb-3 text-sm font-medium text-slate-300">Автопостинг при публикации</h4>
+          <p className="mb-3 text-xs text-slate-500">При публикации поста автоматически создать записи для шаринга:</p>
+          <div className="flex flex-wrap gap-4">
+            {[
+              { id: "telegram", label: "Telegram" },
+              { id: "whatsapp", label: "WhatsApp" },
+              { id: "vk", label: "VK" },
+            ].map((platform) => (
+              <label key={platform.id} className="flex items-center gap-2 text-sm text-slate-400">
+                <input
+                  type="checkbox"
+                  checked={socialPlatforms.includes(platform.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSocialPlatforms([...socialPlatforms, platform.id]);
+                    } else {
+                      setSocialPlatforms(socialPlatforms.filter((p) => p !== platform.id));
+                    }
+                  }}
+                  className="rounded border-slate-700 bg-slate-900"
+                />
+                {platform.label}
+              </label>
+            ))}
+          </div>
+        </div>
 
         <div className="flex gap-4 pt-4">
           <button

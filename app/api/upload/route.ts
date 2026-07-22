@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import {
+  s3Configured,
+  uploadToS3,
+  generateFileKey,
+} from "@/lib/s3";
+import { processImage, isImageFile } from "@/lib/image-processing";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
-import crypto from "crypto";
+import { logUpload } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -16,33 +22,81 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as string) || "uploads";
+    const folder = ((formData.get("folder") as string) || "uploads")
+      .replace(/[^a-zA-Z0-9_-]/g, "")
+      .replace(/\.\./g, "");
+    const maxWidth = parseInt(formData.get("maxWidth") as string) || 1920;
+    const maxHeight = parseInt(formData.get("maxHeight") as string) || 1080;
+    const quality = parseInt(formData.get("quality") as string) || 80;
+    const reducePercent = parseInt(formData.get("reducePercent") as string) || 30;
 
     if (!file) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    let buffer = Buffer.from(bytes);
+    let contentType = file.type || "application/octet-stream";
+    let extension = file.name.split(".").pop() || "bin";
 
-    // Generate unique filename
-    const ext = file.name.split(".").pop();
-    const filename = `${crypto.randomUUID()}.${ext}`;
+    // Process image if it's an image file
+    if (isImageFile(file.name)) {
+      const processed = await processImage(buffer, {
+        maxWidth,
+        maxHeight,
+        quality,
+        format: "webp",
+        reducePercent,
+      });
+      buffer = Buffer.from(processed.buffer);
+      contentType = processed.contentType;
+      extension = processed.extension;
+    }
 
-    // Create upload directory
+    // Upload to S3 if configured, otherwise local filesystem
+    if (s3Configured) {
+      const key = generateFileKey(folder, `${file.name.split(".")[0]}.${extension}`);
+      const url = await uploadToS3(key, buffer, contentType);
+      logUpload(
+        (session.user as any)?.id || "",
+        session.user?.name || "User",
+        (session.user as any)?.role || "USER",
+        file.name,
+        folder
+      );
+      return NextResponse.json({
+        url,
+        filename: `${file.name.split(".")[0]}.${extension}`,
+        storage: "s3",
+        processed: isImageFile(file.name),
+      });
+    }
+
+    // Local filesystem fallback
+    const filename = `${crypto.randomUUID()}.${extension}`;
+
     const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
     }
 
-    // Write file
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
-    // Return public URL
     const url = `/uploads/${folder}/${filename}`;
-
-    return NextResponse.json({ url, filename });
+    logUpload(
+      (session.user as any)?.id || "",
+      session.user?.name || "User",
+      (session.user as any)?.role || "USER",
+      file.name,
+      folder
+    );
+    return NextResponse.json({
+      url,
+      filename,
+      storage: "local",
+      processed: isImageFile(file.name),
+    });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

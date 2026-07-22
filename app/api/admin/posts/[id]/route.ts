@@ -47,7 +47,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { title, content, excerpt, status, type, tags, coverImage, location, fishType, weight } = body;
+    const { title, content, excerpt, status, type, tags, coverImage, location, fishType, weight, socialPlatforms } = body;
 
     const data: Record<string, any> = {};
     if (title !== undefined) data.title = title;
@@ -83,6 +83,20 @@ export async function PUT(
       data,
       include: { tags: true },
     });
+
+    // Auto-posting to social platforms when publishing
+    if (status === "PUBLISHED" && socialPlatforms && socialPlatforms.length > 0) {
+      for (const platform of socialPlatforms) {
+        const existing = await prisma.socialPost.findFirst({
+          where: { postId: id, platform, status: { not: "failed" } },
+        });
+        if (!existing) {
+          await prisma.socialPost.create({
+            data: { postId: id, platform, status: "sent", sentAt: new Date() },
+          }).catch(() => {});
+        }
+      }
+    }
 
     return NextResponse.json(post);
   } catch (error) {

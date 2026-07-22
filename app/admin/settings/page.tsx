@@ -60,6 +60,19 @@ const SECTION_DESCRIPTIONS: Record<string, string> = {
 const INPUT_CLASS = "w-full rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-slate-600 focus:outline-none";
 const LABEL_CLASS = "block mb-1 text-sm text-slate-400";
 
+interface SeoRecord {
+  pageKey: string;
+  metaTitle: string;
+  metaDescription: string;
+  ogImage: string;
+}
+
+const SEO_PAGES = [
+  { key: "home", label: "Главная страница" },
+  { key: "posts", label: "Публикации" },
+  { key: "portfolio", label: "Портфолио" },
+];
+
 export default function SettingsPage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,9 +80,13 @@ export default function SettingsPage() {
   const [editForm, setEditForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
   const [newSectionType, setNewSectionType] = useState("");
+  const [seoData, setSeoData] = useState<Record<string, SeoRecord>>({});
+  const [seoEditing, setSeoEditing] = useState<string | null>(null);
+  const [seoSaving, setSeoSaving] = useState(false);
 
   useEffect(() => {
     fetchSections();
+    fetchSeo();
   }, []);
 
   const fetchSections = async () => {
@@ -79,6 +96,44 @@ export default function SettingsPage() {
       setSections(data);
     }
     setLoading(false);
+  };
+
+  const fetchSeo = async () => {
+    try {
+      const res = await fetch("/api/admin/seo", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        const map: Record<string, SeoRecord> = {};
+        for (const item of data) {
+          map[item.pageKey] = item;
+        }
+        setSeoData(map);
+      }
+    } catch {}
+  };
+
+  const handleSeoSave = async (pageKey: string) => {
+    setSeoSaving(true);
+    const record = seoData[pageKey] || { pageKey, metaTitle: "", metaDescription: "", ogImage: "" };
+    await fetch("/api/admin/seo", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(record),
+    });
+    setSeoEditing(null);
+    setSeoSaving(false);
+    fetchSeo();
+  };
+
+  const updateSeo = (pageKey: string, field: string, value: string) => {
+    setSeoData((prev) => ({
+      ...prev,
+      [pageKey]: {
+        ...(prev[pageKey] || { pageKey, metaTitle: "", metaDescription: "", ogImage: "" }),
+        [field]: value,
+      },
+    }));
   };
 
   const handleToggle = async (id: string, isActive: boolean) => {
@@ -385,6 +440,88 @@ export default function SettingsPage() {
       </div>
 
       {sections.length === 0 && <div className="text-center py-12 text-slate-500">Нет секций. Используйте форму выше для создания.</div>}
+
+      {/* SEO секция */}
+      <div className="mt-12 border-t border-slate-800 pt-8">
+        <h2 className="text-xl font-bold text-slate-100 mb-2">SEO-настройки страниц</h2>
+        <p className="text-sm text-slate-400 mb-6">Meta-теги для статических страниц (title, description, og:image)</p>
+
+        <div className="space-y-3">
+          {SEO_PAGES.map(({ key, label }) => (
+            <div key={key} className="rounded-2xl border border-slate-800 bg-slate-900/50">
+              <div
+                className="flex items-center justify-between p-4 cursor-pointer"
+                onClick={() => setSeoEditing(seoEditing === key ? null : key)}
+              >
+                <div>
+                  <span className="font-medium text-slate-100">{label}</span>
+                  {seoData[key]?.metaTitle && (
+                    <p className="text-xs text-slate-500 mt-0.5 truncate max-w-md">
+                      {seoData[key].metaTitle} — {seoData[key].metaDescription?.slice(0, 60)}...
+                    </p>
+                  )}
+                </div>
+                <Settings className="h-4 w-4 text-slate-500" />
+              </div>
+
+              {seoEditing === key && (
+                <div className="border-t border-slate-800 p-4 space-y-4">
+                  <div>
+                    <label className={LABEL_CLASS}>Meta Title</label>
+                    <input
+                      type="text"
+                      value={seoData[key]?.metaTitle || ""}
+                      onChange={(e) => updateSeo(key, "metaTitle", e.target.value)}
+                      className={INPUT_CLASS}
+                      placeholder="Заголовок для поисковика (до 60 символов)"
+                      maxLength={60}
+                    />
+                    <p className="text-xs text-slate-500 mt-1">{(seoData[key]?.metaTitle || "").length}/60</p>
+                  </div>
+                  <div>
+                    <label className={LABEL_CLASS}>Meta Description</label>
+                    <textarea
+                      value={seoData[key]?.metaDescription || ""}
+                      onChange={(e) => updateSeo(key, "metaDescription", e.target.value)}
+                      rows={3}
+                      className={INPUT_CLASS}
+                      placeholder="Описание для поисковика (до 160 символов)"
+                      maxLength={160}
+                    />
+                    <p className="text-xs text-slate-500 mt-1">{(seoData[key]?.metaDescription || "").length}/160</p>
+                  </div>
+                  <div>
+                    <label className={LABEL_CLASS}>OG Image URL</label>
+                    <input
+                      type="text"
+                      value={seoData[key]?.ogImage || ""}
+                      onChange={(e) => updateSeo(key, "ogImage", e.target.value)}
+                      className={INPUT_CLASS}
+                      placeholder="https://... (изображение для соцсетей)"
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => handleSeoSave(key)}
+                      disabled={seoSaving}
+                      className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
+                    >
+                      {seoSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      {seoSaving ? "Сохранение..." : "Сохранить"}
+                    </button>
+                    <button
+                      onClick={() => setSeoEditing(null)}
+                      className="rounded-xl border border-slate-800 px-4 py-2 text-sm text-slate-400 hover:text-slate-100"
+                    >
+                      Отмена
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

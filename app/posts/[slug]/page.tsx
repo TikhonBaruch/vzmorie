@@ -1,7 +1,5 @@
-"use client";
-
-import { use } from "react";
-import { trpc } from "@/lib/trpc";
+import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -14,6 +12,87 @@ import {
 } from "lucide-react";
 import { Header } from "../../../components/Header";
 import { Footer } from "../../../components/Footer";
+import { ShareButtons } from "@/components/ShareButtons";
+import { CommentsSection } from "@/components/CommentsSection";
+import { SITE_URL } from "@/lib/config";
+import type { Metadata } from "next";
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  try {
+    const posts = await prisma.post.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true },
+    });
+    return posts.map((post) => ({ slug: post.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  try {
+    const { slug } = await params;
+    const post = await prisma.post.findFirst({
+      where: { slug, status: "PUBLISHED" },
+      select: {
+        title: true,
+        excerpt: true,
+        coverImage: true,
+        content: true,
+        metaTitle: true,
+        metaDescription: true,
+        ogImage: true,
+      },
+    });
+
+    if (!post) return { title: "Публикация не найдена" };
+
+    const title = post.metaTitle || post.title;
+    const description =
+      post.metaDescription ||
+      post.excerpt ||
+      post.content?.slice(0, 160) ||
+      "";
+    const image =
+      post.ogImage ||
+      post.coverImage ||
+      `${SITE_URL}/images/hero.jpg`;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/posts/${slug}`,
+        images: [{ url: image, width: 1200, height: 630, alt: title }],
+        type: "article",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [image],
+      },
+      alternates: {
+        canonical: `${SITE_URL}/posts/${slug}`,
+      },
+    };
+  } catch {
+    const { slug } = await params;
+    return {
+      title: "Публикация",
+      description: "",
+      alternates: { canonical: `${SITE_URL}/posts/${slug}` },
+    };
+  }
+}
 
 const typeLabels: Record<string, string> = {
   CATCH: "Улов",
@@ -24,43 +103,96 @@ const typeLabels: Record<string, string> = {
   NEWS: "Новость",
 };
 
-export default function PostPage({
+export default async function PostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = use(params);
-  const { data: post, isLoading } = trpc.post.bySlug.useQuery({ slug });
+  const { slug } = await params;
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
-        <div className="text-slate-400">Загрузка...</div>
-      </div>
-    );
-  }
+  const post = await prisma.post.findFirst({
+    where: { slug, status: "PUBLISHED" },
+    include: {
+      author: { select: { id: true, name: true, image: true } },
+      tags: { select: { id: true, name: true, slug: true } },
+      media: { orderBy: { createdAt: "asc" } },
+      comments: {
+        include: {
+          author: { select: { id: true, name: true, image: true } },
+          replies: {
+            include: {
+              author: { select: { id: true, name: true, image: true } },
+            },
+          },
+        },
+        where: { parentId: null },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
 
-  if (!post) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-100">
-            Публикация не найдена
-          </h1>
-          <Link
-            href="/posts"
-            className="mt-4 inline-flex items-center gap-2 text-terracotta-500 hover:text-terracotta-400"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Вернуться к списку
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (!post) notFound();
+
+  const seoTitle = post.metaTitle || post.title;
+  const seoDesc =
+    post.metaDescription ||
+    post.excerpt ||
+    post.content?.slice(0, 160) ||
+    "";
+  const seoImage =
+    post.ogImage ||
+    post.coverImage ||
+    `${SITE_URL}/images/hero.jpg`;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: seoTitle,
+    description: seoDesc,
+    image: seoImage,
+    url: `${SITE_URL}/posts/${post.slug}`,
+    datePublished: (post.publishedAt || post.createdAt).toISOString(),
+    author: {
+      "@type": "Person",
+      name: post.author?.name || "Взморье",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Взморье",
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/images/hero.jpg` },
+    },
+  };
+
+  const breadcrumbs = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Главная", item: SITE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Публикации",
+        item: `${SITE_URL}/posts`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: seoTitle,
+        item: `${SITE_URL}/posts/${post.slug}`,
+      },
+    ],
+  };
 
   return (
     <div className="text-slate-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
       <Header />
       <main className="container-tactical pb-16 pt-24 sm:pt-28">
         <Link
@@ -80,6 +212,7 @@ export default function PostPage({
               fill
               className="object-cover"
               priority
+              sizes="(max-width: 768px) 100vw, 768px"
             />
           </div>
         )}
@@ -137,7 +270,7 @@ export default function PostPage({
               )}
               {post.weight && (
                 <span className="flex items-center gap-1 text-sm text-slate-300">
-                   <Scale className="h-4 w-4 text-khaki-500" />
+                  <Scale className="h-4 w-4 text-khaki-500" />
                   {post.weight} кг
                 </span>
               )}
@@ -158,6 +291,15 @@ export default function PostPage({
               ))}
             </div>
           )}
+
+          {/* Share */}
+          <div className="mt-6 border-t border-slate-800 pt-6">
+            <ShareButtons
+              url={`${SITE_URL}/posts/${post.slug}`}
+              title={post.title}
+              description={post.content?.slice(0, 200) || post.title}
+            />
+          </div>
         </div>
 
         {/* Content */}
@@ -183,9 +325,10 @@ export default function PostPage({
                 >
                   <Image
                     src={item.url}
-                    alt=""
+                    alt={item.filename || ""}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 384px"
                   />
                 </div>
               ))}
@@ -194,44 +337,7 @@ export default function PostPage({
         )}
 
         {/* Comments */}
-        <div className="mt-12 border-t border-slate-800 pt-8">
-          <h2 className="mb-6 flex items-center gap-2 text-lg font-semibold text-slate-100">
-            <MessageSquare className="h-5 w-5" />
-            Комментарии ({post.comments.length})
-          </h2>
-
-          {post.comments.length === 0 ? (
-            <p className="text-slate-400">Пока нет комментариев</p>
-          ) : (
-            <div className="space-y-4">
-              {post.comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="rounded-xl border border-slate-800 bg-slate-900/50 p-4"
-                >
-                  <div className="flex items-center gap-2">
-                    {comment.author.image && (
-                      <img
-                        src={comment.author.image}
-                        alt=""
-                        className="h-6 w-6 rounded-full"
-                      />
-                    )}
-                    <span className="text-sm font-medium text-slate-200">
-                      {comment.author.name}
-                    </span>
-                    <span className="text-xs text-slate-500">
-                      {new Date(comment.createdAt).toLocaleDateString("ru-RU")}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-slate-300">
-                    {comment.content}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <CommentsSection postSlug={post.slug} />
       </main>
       <Footer />
     </div>

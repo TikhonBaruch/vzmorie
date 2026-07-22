@@ -82,6 +82,7 @@ model Post {
   tags        Tag[]
   media       Media[]
   comments    Comment[]
+  socialPosts SocialPost[]
   location    String?
   latitude    Float?
   longitude   Float?
@@ -319,4 +320,19 @@ model PageSection {
   @@unique([page, type])
   @@index([page])
   @@map("page_sections")
+}
+
+model SocialPost {
+  id          String   @id @default(cuid())
+  postId      String
+  platform    String
+  status      String   @default("pending")
+  sentAt      DateTime?
+  error       String?
+  createdAt   DateTime @default(now())
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([status])
+  @@map("social_posts")
 }

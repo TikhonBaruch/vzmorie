@@ -1,70 +1,69 @@
-// S3-compatible storage utility
-// Works with Yandex Object Storage, AWS S3, Cloudflare R2, etc.
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 
-interface UploadOptions {
-  file: File;
-  folder?: string;
-  onProgress?: (progress: number) => void;
-}
+const bucket = process.env.S3_BUCKET;
+const endpoint = process.env.S3_ENDPOINT;
+const region = process.env.S3_REGION || "ru-central1";
+const accessKeyId = process.env.S3_ACCESS_KEY;
+const secretAccessKey = process.env.S3_SECRET_KEY;
 
-interface UploadResult {
-  url: string;
-  key: string;
-}
+export const s3Configured = !!(bucket && endpoint && accessKeyId && secretAccessKey);
 
-export async function uploadToS3({
-  file,
-  folder = "uploads",
-}: UploadOptions): Promise<UploadResult> {
-  const response = await fetch("/api/upload/presign", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      filename: file.name,
-      contentType: file.type,
-      folder,
-    }),
-  });
+function getClient(): S3Client {
+  if (!s3Configured) {
+    throw new Error("S3 not configured. Set S3_BUCKET, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY");
+  }
 
-  const { uploadUrl, key, publicUrl } = await response.json();
-
-  await fetch(uploadUrl, {
-    method: "PUT",
-    body: file,
-    headers: {
-      "Content-Type": file.type,
+  return new S3Client({
+    endpoint,
+    region,
+    credentials: {
+      accessKeyId: accessKeyId!,
+      secretAccessKey: secretAccessKey!,
     },
+    forcePathStyle: true,
   });
-
-  return {
-    url: publicUrl,
-    key,
-  };
 }
 
-export function getFileExtension(filename: string): string {
-  return filename.split(".").pop()?.toLowerCase() || "";
+export function getS3BaseUrl(): string {
+  return `${endpoint}/${bucket}`;
 }
 
-export function isImageFile(filename: string): boolean {
-  const ext = getFileExtension(filename);
-  return ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext);
+export async function uploadToS3(
+  key: string,
+  body: Buffer,
+  contentType: string
+): Promise<string> {
+  const client = getClient();
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+    })
+  );
+
+  return `${getS3BaseUrl()}/${key}`;
 }
 
-export function isAudioFile(filename: string): boolean {
-  const ext = getFileExtension(filename);
-  return ["mp3", "wav", "ogg", "m4a", "webm"].includes(ext);
+export async function deleteFromS3(key: string): Promise<void> {
+  const client = getClient();
+
+  await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    })
+  );
 }
 
-export function isVideoFile(filename: string): boolean {
-  const ext = getFileExtension(filename);
-  return ["mp4", "webm", "mov", "avi"].includes(ext);
-}
-
-export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+export function generateFileKey(folder: string, filename: string): string {
+  const ext = filename.split(".").pop() || "bin";
+  const uuid = crypto.randomUUID();
+  return `${folder}/${uuid}.${ext}`;
 }
