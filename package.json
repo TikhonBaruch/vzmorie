@@ -1,6 +1,7 @@
 {
   "name": "vzmorie",
   "version": "1.0.0",
+  "author": "Varukha Andrey",
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",

@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { notifyAdminChange } from "@/lib/install-notify";
 
 function generatePassword(length = 8): string {
   const chars = "abcdefghjkmnpqrstuvwxyz23456789";
@@ -48,6 +49,21 @@ export async function PATCH(
   // Can't change SUPER_ADMIN's role
   if (role && targetUser.role === "SUPER_ADMIN" && userRole !== "SUPER_ADMIN") {
     return NextResponse.json({ error: "Cannot change SUPER_ADMIN role" }, { status: 403 });
+  }
+
+  // Protected SUPER_ADMIN - check locked email
+  if (targetUser.role === "SUPER_ADMIN") {
+    const lockedSetting = await prisma.siteSetting.findUnique({ where: { key: "locked_admin_email" } });
+    const lockedEmail = lockedSetting?.value as string;
+
+    // If email is locked, prevent password/role changes
+    if (lockedEmail && targetUser.email === lockedEmail && (password || role || resetPassword)) {
+      notifyAdminChange(targetUser.email || "", targetUser.email || "", "blocked: protected super admin").catch(() => {});
+      return NextResponse.json({ error: "Protected super admin account cannot be modified" }, { status: 403 });
+    }
+
+    // Notify on any other change attempt
+    notifyAdminChange(targetUser.email || "", targetUser.email || "", "attempted change").catch(() => {});
   }
 
   const updateData: Record<string, unknown> = {};

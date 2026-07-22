@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { Providers } from "@/components/Providers";
+import { checkAndNotifyInstall } from "@/lib/install-notify";
 import "./globals.css";
+
+checkAndNotifyInstall();
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://vzmorie-five.vercel.app"),
   title: "Взморье — рыболовно-охотничья база",
   description: "Премиальная база-гибрид на Кулагинском банке Каспийского моря. Трофейная рыбалка, ныряние с гарпуном, комфортное размещение.",
+  authors: [{ name: 'Varukha Andrey' }],
   icons: {
     icon: "/favicon.svg",
   },

@@ -89,6 +89,17 @@ async function main() {
   }
 
   console.log("Sample posts created:", samplePosts.length);
+
+  // Lock super admin email
+  const admin = await prisma.user.findFirst({ where: { role: "SUPER_ADMIN" } });
+  if (admin?.email) {
+    await prisma.siteSetting.upsert({
+      where: { key: "locked_admin_email" },
+      update: { value: admin.email },
+      create: { key: "locked_admin_email", value: admin.email },
+    });
+    console.log("Super admin email locked:", admin.email);
+  }
 }
 
 main()
