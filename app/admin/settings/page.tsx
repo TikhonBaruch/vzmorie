@@ -111,8 +111,7 @@ export default function SettingsPage() {
         body: JSON.stringify({ enabled: !restrictedMode }),
       });
       if (res.ok) {
-        const data = await res.json();
-        setRestrictedMode(data.enabled);
+        window.location.reload();
       }
     } catch {}
     setRestrictedLoading(false);
