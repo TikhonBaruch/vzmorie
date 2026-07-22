@@ -83,11 +83,40 @@ export default function SettingsPage() {
   const [seoData, setSeoData] = useState<Record<string, SeoRecord>>({});
   const [seoEditing, setSeoEditing] = useState<string | null>(null);
   const [seoSaving, setSeoSaving] = useState(false);
+  const [restrictedMode, setRestrictedMode] = useState(false);
+  const [restrictedLoading, setRestrictedLoading] = useState(false);
 
   useEffect(() => {
     fetchSections();
     fetchSeo();
+    fetchRestrictedMode();
   }, []);
+
+  const fetchRestrictedMode = async () => {
+    try {
+      const res = await fetch("/api/admin/settings/restricted-mode");
+      if (res.ok) {
+        const data = await res.json();
+        setRestrictedMode(data.enabled);
+      }
+    } catch {}
+  };
+
+  const toggleRestrictedMode = async () => {
+    setRestrictedLoading(true);
+    try {
+      const res = await fetch("/api/admin/settings/restricted-mode", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: !restrictedMode }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRestrictedMode(data.enabled);
+      }
+    } catch {}
+    setRestrictedLoading(false);
+  };
 
   const fetchSections = async () => {
     const res = await fetch("/api/admin/sections?page=landing", { credentials: "include" });
@@ -521,6 +550,34 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Restricted Mode */}
+      <div className="mt-12 border-t border-slate-800 pt-8">
+        <h2 className="text-xl font-bold text-slate-100 mb-2">Ограничение доступа</h2>
+        <p className="text-sm text-slate-400 mb-4">При включении все пользователи (кроме Супер-админа) будут иметь доступ только к чату.</p>
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4 flex items-center justify-between">
+          <div>
+            <span className="text-sm font-medium text-slate-100">Режим ограничения</span>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {restrictedMode ? "Включён — Админ, Редактор, Специалист видят только чат" : "Выключен — полный доступ"}
+            </p>
+          </div>
+          <button
+            onClick={toggleRestrictedMode}
+            disabled={restrictedLoading}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+              restrictedMode ? "bg-red-600" : "bg-slate-700"
+            }`}
+          >
+            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+              restrictedMode ? "translate-x-6" : "translate-x-1"
+            }`} />
+          </button>
+        </div>
+        {restrictedMode && (
+          <p className="mt-2 text-xs text-red-400">Режим ограничения активен. Специалисты, Редакторы и Админы могут использовать только чат.</p>
+        )}
       </div>
     </div>
   );

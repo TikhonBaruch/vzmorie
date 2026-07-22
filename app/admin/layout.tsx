@@ -37,23 +37,33 @@ export default function AdminLayout({
   const router = useRouter();
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [restrictedMode, setRestrictedMode] = useState(false);
 
   const userRole = (session?.user as any)?.role;
   const isSuperAdmin = userRole === "SUPER_ADMIN";
   const isSpecialist = userRole === "SPECIALIST";
-  const sidebar = allSidebar.filter(
-    (item) => !item.roles || item.roles.includes(userRole)
-  );
+  const isRestricted = restrictedMode && userRole !== "SUPER_ADMIN";
+  const sidebar = isRestricted
+    ? allSidebar.filter((item) => item.href === "/admin/chat" || item.href === "/admin")
+    : allSidebar.filter((item) => !item.roles || item.roles.includes(userRole));
 
-  // Specialist: redirect away from restricted pages
   useEffect(() => {
-    if (isSpecialist && !SPECIALIST_ALLOWED.includes(pathname)) {
+    fetch("/api/admin/settings/restricted-mode")
+      .then((r) => r.json())
+      .then((d) => setRestrictedMode(d.enabled))
+      .catch(() => {});
+  }, []);
+
+  // Redirect away from restricted pages
+  useEffect(() => {
+    const blocked = isSpecialist || isRestricted;
+    if (blocked && !["/admin", "/admin/chat", "/admin/login"].includes(pathname)) {
       router.replace("/admin/chat");
     }
-  }, [isSpecialist, pathname, router]);
+  }, [isSpecialist, isRestricted, pathname, router]);
 
-  // Specialist: horizontal top bar layout (mobile-optimized)
-  if (isSpecialist) {
+  // Specialist/restricted: horizontal top bar layout (mobile-optimized)
+  if (isSpecialist || isRestricted) {
     return (
       <div className="flex min-h-screen flex-col bg-slate-950">
         {/* Top bar */}
