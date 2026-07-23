@@ -27,6 +27,7 @@ interface Post {
   location: string | null;
   fishType: string | null;
   weight: number | null;
+  authorId: string;
   createdAt: string;
   author: { id: string; name: string };
   tags: Tag[];
@@ -272,6 +273,15 @@ function PostForm({
   const [saving, setSaving] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [socialPlatforms, setSocialPlatforms] = useState<string[]>([]);
+  const [authorId, setAuthorId] = useState(post?.authorId || "");
+  const [specialists, setSpecialists] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/specialists", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => setSpecialists(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -294,6 +304,7 @@ function PostForm({
       metaTitle,
       metaDescription,
       ogImage,
+      authorId: authorId || undefined,
     };
 
     // Only send socialPlatforms when publishing
@@ -366,6 +377,19 @@ function PostForm({
               <option value="PENDING">На модерации</option>
               <option value="PUBLISHED">Опубликовано</option>
               <option value="ARCHIVED">В архиве</option>
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>Автор</label>
+            <select
+              value={authorId}
+              onChange={(e) => setAuthorId(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">По умолчанию (я)</option>
+              {specialists.map((s: any) => (
+                <option key={s.id} value={s.id}>{s.name}{s.specialization ? ` — ${s.specialization}` : ""}</option>
+              ))}
             </select>
           </div>
         </div>

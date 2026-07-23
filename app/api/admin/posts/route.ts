@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, content, excerpt, type, tags, coverImage, location, fishType, weight } = body;
+    const { title, content, excerpt, type, tags, coverImage, location, fishType, weight, authorId } = body;
 
     if (!title) {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
@@ -61,7 +61,13 @@ export async function POST(req: Request) {
 
     const slugUnique = `${slug}-${Date.now()}`;
 
-    let author = await prisma.user.findFirst();
+    // Use provided authorId or fallback
+    let author;
+    if (authorId) {
+      author = await prisma.user.findUnique({ where: { id: authorId } });
+    } else {
+      author = await prisma.user.findFirst();
+    }
     if (!author) {
       author = await prisma.user.create({
         data: { name: "System", role: "ADMIN" },

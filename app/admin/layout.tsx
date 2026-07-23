@@ -22,6 +22,7 @@ const allSidebar = [
   { label: "Настройки главной", href: "/admin/settings", icon: Settings, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Telegram", href: "/admin/telegram", icon: Bot, roles: ["ADMIN", "SUPER_ADMIN"] },
   { label: "Пользователи", href: "/admin/users", icon: Users, roles: ["SUPER_ADMIN"] },
+  { label: "Специалисты", href: "/admin/specialists", icon: Users, roles: ["SUPER_ADMIN"] },
   { label: "Аудит", href: "/admin/audit", icon: Shield, roles: ["SUPER_ADMIN"] },
 ];
 
